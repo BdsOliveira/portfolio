@@ -11,20 +11,67 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
     </style>
 
+    <!--### Import Font Awesome CDN ###-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!--### CSS File ###-->
     <link rel="stylesheet" href="css/style.css" type="text/css">
 
     <!--### Webpage title ###-->
     <title>Portfolio - Bruno Oliveira</title>
+
+    <!--### Lottie Animation ###-->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 
 <body>
-    <div class="content">
-        <img src="img/Coding_SVG.svg" alt="Conding Webpage!">
-        <i class="fa-solid fa-laptop-code x10"></i>
-        <h2>
-            In Development!
-        </h2>
+    <!-- Section with header -->
+    <div class="menu dark-theme">
+        <ul class="menu-itens dark-theme">
+            <li><a href="#" class="li-iten-home dark-theme">Home</a></li>
+        </ul>
+        <ul class="menu-itens">
+            <li><i class="fas fa-toggle-off fa-xl"></i></li>
+            <li><a class="li-iten dark-theme" href="#">About</a></li>
+            <li><a class="li-iten dark-theme" href="#">Portfolio</a></li>
+            <li><a class="li-iten dark-theme" href="#">Contact</a></li>
+            <li><button class="button" href="#">Resume</button></li> <!-- Goes to another page -->
+        </ul>
+    </div>
+    <div class="container dark-theme">
+        <div class="header-left-side  dark-theme">
+            <p>Hi there! I'm</p>
+            <h1>Bruno Oliveira</h1>
+            <p>I lives in Piauí - Brasil. And I'm studing to be a pro</p>
+            <h1>Full-Stack Web Developer</h1> <br>
+            <button class="button button-dark-theme margin-top-20px" href="#">Contact Me</button>
+        </div>
+
+        <lottie-player src="https://assets7.lottiefiles.com/packages/lf20_frvnyetk.json" background="transparent"
+            speed="0.3" class="lottie" loop autoplay></lottie-player>
+        <div class="scroll">
+            <lottie-player src="
+            https://assets3.lottiefiles.com/packages/lf20_xddbtikg.json" background="transparent" speed="2"
+                class="scroll-iten" loop autoplay></lottie-player>
+        </div>
+    </div>
+
+    <!-- Section About Me -->
+    Small Component Skills with JavaScript using the &lt;skill&gt; tag <br>
+    <!-- Section Portfolio -->
+    Small Component Projects with JavaScript using the &lt;project&gt; tag <br>
+    <!-- Section Contact -->
+    Basic contact form to send me an email and a button to a full form in the offer page <br>
+    <!-- Section Footer -->
+    <div class="container dark-theme footer">
+        <div> Build with&nbsp;<i class="fa-brands fa-html5 fa-xl"></i>&nbsp;<i class="fa-brands fa-css3-alt fa-xl"></i>&nbsp;<i class="fa-brands fa-js-square fa-xl"></i>&nbsp;by me&nbsp;<i class="fa-solid fa-face-smile-wink fa-xl"></i></div>
+        <div>
+            Find me on
+            <a class="dark-theme" href="https://github.com/BdsOliveira"><i class="fa-brands fa-github fa-2xl"></i></a>
+            <a class="dark-theme" href="https://www.linkedin.com/in/bruno-oliveira/"><i class="fa-brands fa-linkedin fa-2xl"></i></a>
+        </div>
     </div>
 </body>
 

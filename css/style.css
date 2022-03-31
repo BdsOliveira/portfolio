@@ -1,16 +1,139 @@
 body {
     margin: 0;
-    padding-top: 100px;
     display: flex;
-    background-color: #C5C7C7;
     font-family: 'Poppins', sans-serif;
-    text-align: center;
-    justify-content: center;
+    flex-wrap: wrap;
+}
+/* Colors page scheme */
+.dark-theme {
+    color: #C5C7C7;
+    background-color: #212121;
 }
 
-.content {
-    min-width: 200px;
-    font-size: 20px;
+.light-theme {
+    background-color: #C5C7C7;
+    color: #212121;
+}
+
+.button-dark-theme {
+    color: black;
+}
+.button-light-theme {
+    color: white;
+    background-color: black;
+}
+
+
+/* Styling itens */
+ul {
+    list-style: none;
+}
+
+.menu {
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.menu-itens {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.li-iten {
+    padding: 15px;
+    text-decoration: none;
+    font-size: 1.3rem;
+}
+
+.li-iten:hover{
+    opacity: 90%;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+}
+
+.li-iten-home {
+    padding: 15px;
+    text-decoration: none;
+    font-size: 1.6rem;
+}
+
+.li-iten-home:hover{
+    opacity: 80%;
+    cursor: pointer;
+}
+
+.fas {
+    padding-right: 10px;
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.header-left-side {
     display: flex;
     flex-direction: column;
+    margin-left: 6.4vw;
+    padding-top: 5vw;
+}
+
+.lottie {
+    display: flex;
+    width: 35rem;
+    height: auto;
+}
+
+.scroll {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding-top: 92px;
+    padding-bottom: 20px;
+}
+
+.scroll-iten {
+    width: 40px;
+}
+
+.button:hover{
+    cursor: pointer;
+    opacity: 100%;
+}
+.button {
+    border-radius: 20px;
+    border: none;
+    font-size: 1.3rem;
+    opacity: 90%;
+    padding: 10px 30px;
+}
+
+h1 {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+p {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.margin-top-20px{
+    margin-top: 20px;;
+}
+
+.footer {
+    padding: 50px;
 }
