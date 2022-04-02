@@ -136,4 +136,6 @@ p {
 
 .footer {
     padding: 50px;
+    justify-content: space-around;
+
 }
