@@ -35,6 +35,7 @@ ul {
     menu {
         margin: 0;
         width: 100%;
+        padding-right: 30px;
         display: grid;
         text-decoration: none;
         grid-template-columns: repeat(2,1fr);
@@ -45,14 +46,18 @@ ul {
     menu {
         margin: 0;
         width: 100%;
-        display: grid;
-        text-decoration: none;
-        grid-template-columns: repeat(1, 1fr);
-        
+        display: flex;
+        text-decoration: none;  
+        justify-content: center;
+        align-items: center;
+        border: 0px solid black;
+        padding: 5px;
     }
     .menu-itens {
         flex-wrap: wrap;
         flex-direction: column;
+        border: 0px solid black;
+        padding: 5px;
     }
 
     .li-iten {
@@ -62,7 +67,7 @@ ul {
         margin-top: 30px;
     }
     .li-iten-home{
-        display: flex;
+        display: none;
     }
 }
 
