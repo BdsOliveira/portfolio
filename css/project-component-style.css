@@ -49,8 +49,13 @@
 
 .card-footer {
     display: flex;
-    justify-content: space-around;
+    flex-wrap: wrap;
     padding: 20px;
+    margin-top: 20px;
+}
+
+.iten-footer {
+    padding-right: 30px;
 }
 
 .tooltip:hover .tooltip-message {
@@ -66,12 +71,17 @@
     position: relative;
     display: none;
     margin-left: -193px;
-    right: -80px;
+    right: -40px;
     top: -45px;
     opacity: 100%;
 }
 
 i:hover {
     cursor: pointer;
-    opacity: 70%;
+    color: white;
+}
+
+.card-title {
+    font-size: 35px;
+    font-weight: 600;
 }

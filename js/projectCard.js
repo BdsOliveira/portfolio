@@ -31,9 +31,10 @@ class ProjectCard extends HTMLElement {
                 <div class="card-description space-inside">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ratione, distinctio facilis natus quis fugiat non temporibus laborum, ducimus, minima saepe voluptas? Optio, quibusdam maiores. Nam explicabo quae voluptate quo!</div>
             </div>
             <div class="card-footer space-inside">
-                <i class="fa-brands fa-github fa-2xl"></i>
-                <i class="fa-brands fa-github fa-2xl"></i>
-                <i class="fa-brands fa-github fa-2xl"></i>
+                <span class="iten-footer fa-brands fa-github fa-2xl"></span>
+                <span class="iten-footer fa-brands fa-github fa-2xl"></span>
+                <span class="iten-footer fa-brands fa-github fa-2xl"></span>
+                <span class="iten-footer fa-brands fa-github fa-2xl"></span>
             </div>
         </div>`;
 
