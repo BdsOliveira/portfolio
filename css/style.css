@@ -192,6 +192,7 @@ a {
 .footer {
     padding: 50px;
     justify-content: space-around;
+    background-color: rgb(0,0,0,0.4);;
 }
 
 .padding-top-10px {
