@@ -1,0 +1,8 @@
+
+
+Next steps:
+-Remove from view project itens that are empt
+-Storage the objects in a Database (Like postgrees/Supabase) 
+-Create a Form in ADM page to insert new projects and save
+-Create a Form to Contact Me
+-Create a page to receive Job Offers
