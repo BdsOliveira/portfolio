@@ -3,21 +3,34 @@ class ProjectCard extends HTMLElement {
     constructor() {
         super();
         this.innerHTML = `
-        <div class="card column border">
-            <div class="card-header row border">
+        <link rel="stylesheet" href="../css/project-component-style.css" type="text/css"></link>
+        <div class="card column space-inside">
+            <div class="card-header row space-inside">
                 <div>
-                    Icon
+                    <span class="fa-solid fa-diagram-project fa-xl"></span>
                 </div>
                 <div>
-                    <i class="fa-brands fa-github fa-2xl"></i>
-                    <i class="fa-brands fa-linkedin fa-2xl"></i>
+                    <span class="tooltip">
+                        <span class="tooltip-message">
+                            Check out this project on my GitHub
+                        </span>
+                        <i class="space-inside fa-brands fa-github fa-2xl"></i>
+                    </span>
+
+                    <span class="tooltip">
+                        <span class="tooltip-message">
+                            Check out this project Live
+                        </span>
+                        <i class="space-inside fa-solid fa-arrow-up-right-from-square fa-2xl"></i>
+                    </span>
+                    
                 </div>
             </div>
-            <div class="card-content column border">
-                <div class="card-title border">Titulo</div>
-                <div class="card-description border">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ratione, distinctio facilis natus quis fugiat non temporibus laborum, ducimus, minima saepe voluptas? Optio, quibusdam maiores. Nam explicabo quae voluptate quo!</div>
+            <div class="card-content column space-inside">
+                <div class="card-title space-inside">Titulo</div>
+                <div class="card-description space-inside">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ratione, distinctio facilis natus quis fugiat non temporibus laborum, ducimus, minima saepe voluptas? Optio, quibusdam maiores. Nam explicabo quae voluptate quo!</div>
             </div>
-            <div class="card-footer border">
+            <div class="card-footer space-inside">
                 <i class="fa-brands fa-github fa-2xl"></i>
                 <i class="fa-brands fa-github fa-2xl"></i>
                 <i class="fa-brands fa-github fa-2xl"></i>
