@@ -1,8 +1,11 @@
 
 
 Next steps:
+-Create a database of projects
+-Create a methods to GET, POST, PACTH and DELETE Projects. 
 -Remove from view project itens that are empt
 -Storage the objects in a Database (Like postgrees/Supabase) 
 -Create a Form in ADM page to insert new projects and save
 -Create a Form to Contact Me
 -Create a page to receive Job Offers
+-Create a backup file of project and save on my Google Drive: backup-projects-portfolio.txt => title most include a date from the last backup.
