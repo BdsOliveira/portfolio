@@ -1,30 +1,20 @@
+/*
+ * COLOR SCHEME
+ * Black: #1A1A40
+ * Navy: #270082
+ * Purple: #7A0BC0
+ * Pink: #FA58B6
+ * Whitesmoke: whitesmoke
+ */
+
 body {
     margin: 0;
     display: flex;
     font-family: 'Poppins', sans-serif;
     flex-wrap: wrap;
+    background-color: #1A1A40;
+    color: whitesmoke;
 }
-
-/* Colors page scheme */
-.dark-theme {
-    color: #C5C7C7;
-    background-color: #212121;
-}
-
-.light-theme {
-    background-color: #C5C7C7;
-    color: #212121;
-}
-
-.button-dark-theme {
-    color: black;
-}
-
-.button-light-theme {
-    color: white;
-    background-color: black;
-}
-
 
 /* Styling itens */
 ul {
@@ -92,7 +82,7 @@ ul {
 .li-iten:hover {
     opacity: 90%;
     cursor: pointer;
-    background-color: white;
+    background-color: #270082;
     color: black;
 }
 
@@ -181,7 +171,7 @@ p {
 
 a {
     text-decoration: none;
-    color: #C5C7C7;
+    color: whitesmoke;
 }
 
 .margin-top-20px {
@@ -205,6 +195,6 @@ a {
 }
 
 .border {
-    border: 2px solid black;
+    border: 2px solid white;
     padding: 5px;
 }
