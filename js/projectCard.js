@@ -13,19 +13,18 @@ class ProjectCard extends HTMLElement {
                         //const divProject = document.createElement("div");
                         //divProject.appendChild(createProjectComponentYourSelfLikeMagic(project))
                     }
-                    console.log(project, 'Sucessfully created', i);
                 }
             })
     }
 
     // Get my all projects from my backend API
     async getProjects() {
-    let projects = [];
-    projects = await fetch('http://localhost:5000/projects');
+        let projects = [];
+        projects = await fetch('http://localhost:5000/projects');
 
-    const response = await projects.json();
-    return response;
-}
+        const response = await projects.json();
+        return response;
+    }
 }
 
 window.customElements.define('project-card', ProjectCard);

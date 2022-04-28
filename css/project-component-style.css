@@ -37,6 +37,12 @@
     background-color: #1A1A40;
     margin: 25px;
     padding: 15px;
+    transition: all .2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.01);
+    background-color: rgba(26, 26, 64, 0.7);
 }
 
 .card-header {
