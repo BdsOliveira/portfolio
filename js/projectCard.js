@@ -10,8 +10,6 @@ class ProjectCard extends HTMLElement {
                     const project = new Project(projects[i]);
                     if (project.isVisible) {
                         this.innerHTML += createProjectComponentYourSelfLikeMagic(project);
-                        //const divProject = document.createElement("div");
-                        //divProject.appendChild(createProjectComponentYourSelfLikeMagic(project))
                     }
                 }
             })
@@ -20,7 +18,7 @@ class ProjectCard extends HTMLElement {
     // Get my all projects from my backend API
     async getProjects() {
         let projects = [];
-        projects = await fetch('http://localhost:5000/projects');
+        projects = await fetch('https://calm-fjord-87764.herokuapp.com/projects');
 
         const response = await projects.json();
         return response;
