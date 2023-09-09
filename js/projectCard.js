@@ -18,7 +18,7 @@ class ProjectCard extends HTMLElement {
     // Get my all projects from my backend API
     async getProjects() {
         let projects = [];
-        projects = await fetch('https://calm-fjord-87764.herokuapp.com/projects');
+        projects = await fetch('http://18.231.162.74:3000/projects');
 
         const response = await projects.json();
         return response;
