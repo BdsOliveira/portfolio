@@ -1,5 +1,5 @@
 export function createProjectComponentYourSelfLikeMagic(project) {
-    return `
+  return `
     <link rel="stylesheet" href="../css/project-component-style.css" type="text/css"></link>
     <div class="card column space-inside" id="${project.id}">
         <div class="card-header row space-inside">
