@@ -1,116 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!--### Import Poppins Font from Google ###-->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-    </style>
-
-    <!--### Import Font Awesome CDN ###-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!--### TailwindCSS CDN ###-->
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-
-    <!--### CSS File ###-->
-    <link rel="stylesheet" href="css/style.css" type="text/css">
-
-    <!--### Webpage title ###-->
-    <title>Portfolio - Bruno Oliveira</title>
-
-    <!--### Lottie Animation ###-->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <title>Bruno Oliveira - Fullstack Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
-<body class="dark-theme">
-    <!-- Header Section -->
-    <menu>
-        <ul class="menu-itens">
-            <li><a href="#" class="li-iten-home">Home</a></li>
-        </ul>
-        <!-- <ul class="menu-itens"> -->
-            <!-- <div>
-                <li><i class="fas fa-toggle-off fa-xl"></i></li>
-            </div> -->
-            <!-- <li class="li-iten"><a href="#about">About</a></li>
-            <li class="li-iten"><a href="#skills">Skills</a></li>
-            <li class="li-iten"><a href="#portfolio">Portfolio</a></li>
-            <li class="li-iten"><a href="#contact">Contact</a></li>
-            <li><button class="button" href="#">Resume</button></li> Goes to another page -->
-        </ul>
-    </menu>
-    <div class="container row dark-theme">
-        <div class="header-left-side column dark-theme">
-            <p>Hi there! I'm</p>
-            <h1>Bruno Oliveira</h1>
-            <p>I lives in Piauí - Brasil. And I'm a</p>
-            <h1>Full-Stack Developer</h1> <br>
-            <button class="button button-dark-theme margin-top-20px" onclick="location.href='https://wa.me/5586998063078?text=Opa%2C+encontrei+voc%C3%AA+pelo+seu+site%21+Podemos+conversar%3F'">Contact Me</button>
+<body class="bg-gray-900 text-gray-100 font-['Inter']">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-gray-800 shadow-lg z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <span class="text-2xl font-bold text-blue-400">Bruno Oliveira</span>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="hover:text-blue-400 transition">Home</a>
+                    <a href="#skills" class="hover:text-blue-400 transition">Skills</a>
+                    <a href="#projects" class="hover:text-blue-400 transition">Projetos</a>
+                    <a href="#certs" class="hover:text-blue-400 transition">Certificações</a>
+                    <a href="#contact" class="hover:text-blue-400 transition">Contato</a>
+                </div>
+            </div>
         </div>
+    </nav>
 
-        <lottie-player src="https://assets7.lottiefiles.com/packages/lf20_frvnyetk.json" background="transparent"
-            speed="0.4" class="lottie" loop autoplay></lottie-player>
-        <div class="scroll">
-            <!-- <lottie-player src="
-            https://assets3.lottiefiles.com/packages/lf20_xddbtikg.json" background="transparent" speed="2"
-                class="scroll-iten" loop autoplay></lottie-player> -->
+    <!-- Hero Section -->
+    <section id="home" class="pt-32 pb-20 px-6">
+        <div class="container mx-auto md:flex items-center">
+            <div class="md:w-1/2 pr-3">
+                <h1 class="text-5xl font-bold mb-6">Bruno Oliveira</h1>
+                <p class="text-xl text-gray-400 mb-8">
+                    Desenvolvedor Fullstack com +<span id="anos"></span> anos de experiência criando soluções robustas e escaláveis.
+                </p>
+                <button class="bg-blue-500 hover:bg-blue-600 px-8 py-3 rounded-lg font-medium transition">
+                    Vamos conversar
+                </button>
+            </div>
+            <div class="md:w-1/2 mt-12 md:mt-0">
+                <div class="bg-gray-800 h-80 rounded-2xl flex items-center justify-center">
+                    <span class="text-gray-400">Imagem de perfil/Ilustração</span>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <!-- About Me Section -->
-    <!-- <section id="about">
-        About Me Section! <br>
-        Prata Medal PUC-Goias.
-    </section> -->
-
-    <!-- Skills Section -->
-    <section id="skills">
-        Backend: PHP - Laravel<br>
-        Frontend: VueJs - Vuetify and NuxtJs<br>
-        Mobile: Flutter<br>
-        Database: MySql
     </section>
 
-    <!-- Portfolio Section -->
-    <!-- <section id="portfolio" class="cards">
-        <project-card></project-card>
-    </section> -->
-
-    <!-- Contact Section -->
-    <!-- <section id="contact">
-        Basic contact form to send me an email and a button to a full form in the offer page <br>
-
-    </section> -->
-
-    <!-- Footer Section -->
-    <footer class="container row dark-theme footer">
-        <div class="padding-top-10px"> Built with&nbsp;
-            <span class="fa-brands fa-html5 fa-xl padding-left-right-5px"></span>
-            <span class="fa-brands fa-css3-alt fa-xl padding-left-right-5px"></span>
-            <span class="fa-brands fa-js-square fa-xl padding-left-right-5px"></span>
-            by me
-            <a href="#">
-                <span class="fa-solid fa-face-smile-wink fa-xl padding-left-right-5px"></span>
-            </a>
-
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-gray-800 px-6">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold mb-12 text-center">Habilidades Técnicas</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-700 p-6 rounded-xl">
+                    <h3 class="text-blue-400 text-xl mb-4">Frontend</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">VueJS</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">NuxtJS</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Tailwind</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">JavaScript</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Vite</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Vuetify</span>
+                    </div>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-xl">
+                    <h3 class="text-blue-400 text-xl mb-4">Backend</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">PHP</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Laravel</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Node.js</span>
+                    </div>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-xl">
+                    <h3 class="text-blue-400 text-xl mb-4">Bancos de Dados</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">SQL</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">MySQL</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">MongoDB</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Indexação de Dados</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Análise de Dados</span>
+                    </div>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-xl">
+                    <h3 class="text-blue-400 text-xl mb-4">Ferramentas</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Docker</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Git</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">GitHub Actions</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Postman</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Insomnia</span>
+                    </div>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-xl">
+                    <h3 class="text-blue-400 text-xl mb-4">Mobile</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Flutter</span>
+                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">BLOC</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="padding-top-10px">
-            Find me on:
-            <a class="dark-theme padding-left-right-5px" href="https://github.com/BdsOliveira" target="_blank"><i
-                    class="fa-brands fa-github fa-2xl"></i></a>
-            <a class="dark-theme padding-left-right-5px" href="https://www.linkedin.com/in/bruno-oliveira/"
-                target="_blank"><i class="fa-brands fa-linkedin fa-2xl"></i></a>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 px-6">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold mb-12 text-center">Projetos Recentes</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-800 p-6 rounded-xl hover:transform hover:scale-105 transition">
+                    <div class="bg-gray-700 h-48 rounded-lg mb-4"></div>
+                    <h3 class="text-xl font-semibold mb-2">Plataforma E-commerce</h3>
+                    <p class="text-gray-400">Solução completa com carrinho, pagamentos e painel administrativo</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="text-sm text-blue-400">VueJS</span>
+                        <span class="text-sm text-blue-400">Laravel</span>
+                        <span class="text-sm text-blue-400">MySQL</span>
+                    </div>
+                </div>
+                <!-- Adicionar mais 2 projetos similares -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications -->
+    <section id="certs" class="py-20 bg-gray-800 px-6">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold mb-12 text-center">Certificações</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-gray-700 p-6 rounded-xl mb-4">
+                    <div class="flex items-center">
+                        <div class="bg-blue-500 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            🏆
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">II Maratona de Programação da PUC-GOIÁS</h3>
+                            <p class="text-gray-400">Medalha de Prata - 2017</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-xl">
+                    <div class="flex items-center">
+                        <div class="bg-blue-500 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            📘
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">EF SET English Certificate</h3>
+                            <p class="text-gray-400">Score 49/100 (B1 Intermediate)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-20 px-6">
+        <div class="container mx-auto max-w-2xl">
+            <h2 class="text-3xl font-bold mb-12 text-center">Entre em Contato</h2>
+            <form class="space-y-6">
+                <div>
+                    <input type="text" placeholder="Nome" class="w-full bg-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <input type="email" placeholder="Email" class="w-full bg-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <textarea rows="5" placeholder="Mensagem" class="w-full bg-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                </div>
+                <button class="w-full bg-blue-500 hover:bg-blue-600 py-4 rounded-lg font-medium transition">
+                    Enviar Mensagem
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-12 px-6">
+        <div class="container mx-auto text-center">
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="https://github.com/BdsOliveira" target="_blank" class="text-gray-400 hover:text-blue-400">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                </a>
+                <a href="https://www.linkedin.com/in/bruno-oliveira/" target="_blank" class="text-gray-400 hover:text-blue-400">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+            <p class="text-gray-400">&copy; 2024 Bruno Oliveira. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <script src="js/projectCard.js" type="module"></script>
+    <script>
+        const currentYear = new Date().getFullYear();
+        document.getElementById("anos").textContent = currentYear - 2022;
+    </script>
 </body>
-
 </html>
