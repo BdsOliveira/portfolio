@@ -62,9 +62,23 @@ specs/[###-feature]/
   for this feature. Delete unused options and expand the chosen structure with
   real paths (e.g., apps/admin, packages/something). The delivered plan must
   not include Option labels.
+
+  CONSTITUTION CONSTRAINT: this repository mandates a fixed directory layout
+  (see "Technology & Structure Constraints" in .specify/memory/constitution.md).
+  Use Option 0 below. Any deviation requires an amendment to the constitution
+  and MUST be recorded in Complexity Tracking.
 -->
 
 ```text
+# Option 0: Static portfolio (MANDATED by constitution)
+index.html
+assets/{images,icons,fonts}/
+css/{variables,base,components,sections}.css
+js/app.js
+js/components/{hero,experience,projects,skills,education}.js
+js/data/{profile,experiences,projects,skills,education}.js
+README.md
+
 # [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
 ├── models/
