@@ -1,0 +1,310 @@
+/*
+ * Section-level layout. Mobile-first: base styles target 320px and every media query is
+ * min-width (contract S-2, research R7). Breakpoints: base → 48rem → 64rem.
+ *
+ * Nothing here hides content at a smaller width. Where a layout needs to change, it changes
+ * shape rather than disappearing (constitution VI, FR-034).
+ */
+
+/* Shared shell ---------------------------------------------------------- */
+
+.site-header,
+.hero,
+.section,
+.site-footer {
+  padding-inline: var(--gutter);
+}
+
+.hero,
+.section {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-block: var(--space-2xl);
+}
+
+.section__heading {
+  margin-block-end: var(--space-lg);
+}
+
+/* Header and navigation -------------------------------------------------- */
+
+/*
+ * The nav is a wrapping flex row at every width. The pre-migration page hid the links
+ * below the tablet breakpoint, which made every destination unreachable on a phone —
+ * the single most common way this site is opened.
+ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-md);
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-block: var(--space-2xs);
+}
+
+.site-nav__brand {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+
+.site-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-md);
+}
+
+.site-nav__list a {
+  display: inline-block;
+  padding-block: var(--space-3xs);
+  text-decoration: none;
+}
+
+.site-nav__list a:hover {
+  text-decoration: underline;
+}
+
+/* Hero ------------------------------------------------------------------- */
+
+.hero {
+  display: grid;
+  gap: var(--space-xl);
+  padding-block-start: var(--space-2xl);
+}
+
+.hero__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.hero__lede {
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+
+.hero__summary {
+  max-width: var(--measure);
+  color: var(--color-text-muted);
+}
+
+.hero__cta {
+  margin-block-start: var(--space-2xs);
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.social-links__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  text-decoration: none;
+}
+
+.social-links__link:hover {
+  text-decoration: underline;
+}
+
+/* Reserves the portrait's space before any image loads, so nothing shifts (FR-037). */
+.hero__portrait-placeholder {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+}
+
+.hero__portrait-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+/* Skills ----------------------------------------------------------------- */
+
+.skill-groups {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.skill-group__name {
+  margin-block-end: var(--space-sm);
+  font-size: var(--text-lg);
+}
+
+/* Projects --------------------------------------------------------------- */
+
+.project-list {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.project-card__image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-block-end: var(--space-2xs);
+}
+
+.project-card__description {
+  color: var(--color-text-muted);
+}
+
+.project-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-block-start: auto;
+  padding-block-start: var(--space-2xs);
+}
+
+/* Certifications --------------------------------------------------------- */
+
+.certification-list {
+  display: grid;
+  gap: var(--space-sm);
+  max-width: var(--measure);
+}
+
+.certification {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.certification__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-accent);
+  color: var(--color-text);
+}
+
+.certification__issuer,
+.certification__detail {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.certification__link {
+  display: inline-block;
+  margin-block-start: var(--space-2xs);
+}
+
+/* Experience and education ----------------------------------------------- */
+
+.timeline {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.timeline__dates,
+.timeline__institution {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.timeline__summary {
+  margin-block-start: var(--space-2xs);
+}
+
+.timeline__achievements {
+  margin-block-start: var(--space-2xs);
+  padding-inline-start: var(--space-md);
+  list-style: disc;
+}
+
+/* Contact ---------------------------------------------------------------- */
+
+.contact-form {
+  display: grid;
+  gap: var(--space-md);
+  max-width: var(--measure);
+}
+
+.contact-form__note {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Footer ----------------------------------------------------------------- */
+
+.site-footer {
+  background-color: var(--color-surface);
+  padding-block: var(--space-xl);
+  margin-block-start: var(--space-2xl);
+}
+
+.site-footer__copyright {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  color: var(--color-text-muted);
+  text-align: center;
+  font-size: var(--text-sm);
+}
+
+/* Tablet ----------------------------------------------------------------- */
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: var(--space-lg);
+  }
+
+  .hero {
+    grid-template-columns: 3fr 2fr;
+    align-items: center;
+    padding-block: var(--space-3xl);
+  }
+
+  .skill-groups,
+  .project-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card,
+  .project-card {
+    padding: var(--space-lg);
+  }
+}
+
+/* Desktop ---------------------------------------------------------------- */
+
+@media (min-width: 64rem) {
+  .skill-groups,
+  .project-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .certification-list,
+  .timeline {
+    gap: var(--space-md);
+  }
+}

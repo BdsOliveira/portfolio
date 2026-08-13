@@ -1,6 +1,44 @@
 <!--
 SYNC IMPACT REPORT
 ==================
+Version change: 1.0.0 → 1.1.0
+Bump rationale: MINOR — the mandated directory layout is materially expanded. Two locations
+                that the 1.0.0 tree omitted are added, both surfaced by feature
+                001-data-driven-migration and carried in its Complexity Tracking table as
+                deviations. Adding them clears both deviations rather than leaving permanent
+                tracked violations against a layout that was simply incomplete.
+
+Modified sections:
+  Technology & Structure Constraints — mandated directory structure:
+    + tests/ (unit/, data/, schemas/, fixtures/, e2e/). The Development Workflow section
+      already mandated automated checks for rendering logic, data integrity, accessibility
+      and responsive behaviour, but the tree provided no home for them. Co-locating them
+      under js/ was rejected: it would ship test files and fixtures to visitors, violating
+      Principle VII.
+    + js/components/certifications.js and js/data/certifications.js. Principle III already
+      named Certifications a required section; the illustrative tree just did not enumerate
+      it, and the live site has certification content.
+    + Rule added: files under tests/ MUST NOT be referenced by index.html or any shipped
+      module, so nothing in that directory reaches a visitor.
+
+Invalidated code: none. This amendment ratifies a layout that already satisfies every
+principle; no migration work is required.
+
+Templates requiring updates:
+  ✅ .specify/templates/plan-template.md — "Option 0" tree matches the amended layout.
+  ✅ .specify/templates/spec-template.md — no change required.
+  ✅ .specify/templates/tasks-template.md — no change required.
+  ✅ README.md — resolved: now documents the mandated layout and the data-driven authoring
+     workflow ("to add a project, edit js/data/projects.js"). The 1.0.0 ⚠ is cleared.
+
+Follow-up TODOs:
+  ✅ Resolved: the flat img/, css/style.css, css/project-component-style.css, js/Project.js,
+     js/projectCard.js and js/createProjectComponentYourSelfLikeMagic.js layout was migrated
+     to the mandated structure by feature 001-data-driven-migration, and those files are
+     deleted.
+
+-- Superseded 1.0.0 report retained below for history --
+
 Version change: (unfilled template) → 1.0.0
 Bump rationale: Initial ratification. All placeholder tokens replaced with concrete,
                 project-specific governance for the vanilla HTML/CSS/JS portfolio.
@@ -217,6 +255,7 @@ portfolio/
 │   │   ├── experience.js
 │   │   ├── projects.js
 │   │   ├── skills.js
+│   │   ├── certifications.js
 │   │   └── education.js
 │   │
 │   └── data/
@@ -224,7 +263,15 @@ portfolio/
 │       ├── experiences.js
 │       ├── projects.js
 │       ├── skills.js
+│       ├── certifications.js
 │       └── education.js
+│
+├── tests/
+│   ├── unit/
+│   ├── data/
+│   ├── schemas/
+│   ├── fixtures/
+│   └── e2e/
 │
 └── README.md
 ```
@@ -241,6 +288,9 @@ Rules governing this layout:
 - Files in `js/components/` MUST contain rendering only — no embedded content literals.
 - New sections (Certifications, Contact, About) extend the structure by adding a sibling
   module in `js/components/` and, where the section is data-driven, in `js/data/`.
+- `tests/` holds automated checks only. Entity schemas live in `tests/schemas/` rather than
+  `js/data/`, so no validator is shipped. Nothing under `tests/` may be referenced by
+  `index.html` or by any module the page loads — the directory must never reach a visitor.
 - Static assets live under `assets/`. Adding new top-level directories requires the
   amendment procedure in Governance.
 
@@ -297,4 +347,4 @@ above. Complexity that violates a principle MUST be recorded in the feature plan
 Complexity Tracking table with the specific need and the simpler alternative that was
 rejected, and why. Unjustified complexity is grounds for rejection.
 
-**Version**: 1.0.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-13
+**Version**: 1.1.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-13

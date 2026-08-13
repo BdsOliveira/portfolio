@@ -170,6 +170,6 @@ Not a component, but contractual — asserted by tier-2 tests.
 |----|-----------|-----------|
 | S-1 | Every colour, spacing, and type value is a `var(--token)`; no literal hex outside `variables.css` | FR-012 |
 | S-2 | All media queries are `min-width` — zero `max-width` queries, so no breakpoint gap can exist | FR-033, FR-035 |
-| S-3 | `--color-accent` (pink) is never applied as text over `--color-surface-accent` (purple): 2.7:1, fails AA | R6, FR-030 |
+| S-3 | `--color-accent` as text clears 4.5:1 against whatever surface is behind it. Asserted by computing the ratio, not by naming colours — the palette this contract was first written for had one pairing at 2.7:1; the current one has none (R6, amended) | R6, FR-030 |
 | S-4 | `variables.css` = tokens only; `base.css` = reset/elements/typography; `components.css` = reusable pieces; `sections.css` = section layout | constitution |
 | S-5 | No `outline: none` without an equal-or-better replacement indicator | FR-026 |

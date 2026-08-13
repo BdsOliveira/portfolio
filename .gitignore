@@ -1,0 +1,12 @@
+node_modules/
+test-results/
+playwright-report/
+.vercel/
+
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+.env
+.env.*

@@ -81,12 +81,17 @@ Two gates opened conflicts that Phase 0 had to resolve rather than wave through:
    touched by JS, repeatable collections are rendered from data — and by adding an automated check
    that the static strings match `profile.js`, so the residual duplication cannot silently drift.
 
-2. **Principle V vs the chosen palette.** The owner selected the navy/purple design. Measured
-   against the `#1A1A40` background, purple `#7A0BC0` reaches 2.1:1 and navy `#270082` reaches
-   1.1:1 — both fail AA as text, and purple fails even the 3:1 large-text threshold. R6 resolves
-   this by assigning those two colours to *surface* roles (whitesmoke on them scores 7.3:1 and
-   13.7:1) and reserving whitesmoke and pink for text. The palette survives intact. One
-   combination is prohibited outright: pink text on a purple surface is 2.7:1.
+2. **Principle V vs the chosen palette.** The owner originally selected the navy/purple design.
+   Measured against the `#1A1A40` background, purple `#7A0BC0` reached 2.1:1 and navy `#270082`
+   reached 1.1:1 — both failing AA as text, purple failing even the 3:1 large-text threshold. R6
+   resolved this by assigning those two colours to *surface* roles and reserving light text and
+   pink for text, with one combination prohibited outright: pink over purple at 2.7:1.
+
+   **Superseded post-implementation.** On reviewing the built site the owner judged that palette
+   too decorative and asked for a sober replacement. R6 was amended to a graphite and steel-blue
+   palette (`#12161C` / `#1B222B` / `#2E3B4B` / `#E8ECF1` / `#7FA6D9`). The gate still passes,
+   and more cleanly: the accent clears 4.5:1 on every surface, so the prohibited pairing no
+   longer exists and the audit computes ratios instead of naming colours.
 
 **Post-Phase 1 re-evaluation**: All nine gates pass. The Phase 1 design introduced no new
 violations. The two ⚠️ items above are resolved by design decisions recorded in `research.md`
@@ -173,10 +178,10 @@ in Complexity Tracking.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| Top-level `tests/` directory not in the mandated layout | The constitution's Development Workflow section mandates automated checks for rendering logic, data integrity, accessibility, and responsive behaviour (FR-044–FR-046), but its mandated tree provides no location for them. Adding new top-level directories requires the amendment procedure. | Co-locating tests beside source in `js/` was rejected: it would ship test files and fixtures to visitors, violating Principle VII. Omitting tests entirely was rejected: it fails FR-044–FR-046 and the constitution's own workflow rules. **Recommended follow-up: amend the constitution to v1.1.0 adding `tests/` to the mandated layout.** |
+| ~~Top-level `tests/` directory not in the mandated layout~~ **RESOLVED** | The constitution's Development Workflow section mandates automated checks for rendering logic, data integrity, accessibility, and responsive behaviour (FR-044–FR-046), but its mandated tree provided no location for them. | Co-locating tests beside source in `js/` was rejected: it would ship test files and fixtures to visitors, violating Principle VII. Omitting tests entirely was rejected: it fails FR-044–FR-046. **Resolved in T083: the constitution was amended to v1.1.0 adding `tests/` to the mandated layout, so this is no longer a deviation.** |
 | Dev dependency: `linkedom` | Components must be verifiable without a browser to keep the per-change gate fast. Node 24 has a test runner but no DOM. | Testing rendered HTML as strings was rejected — it cannot assert element semantics, attributes, or heading structure, which is most of what the contracts guarantee. `jsdom` is a viable heavier fallback. |
 | Dev dependencies: `@playwright/test`, `@axe-core/playwright` | Contrast (FR-030), keyboard operability (FR-025), request origin (FR-019), and horizontal-scroll absence (FR-036) require a real engine with layout and computed styles. | Manual checking was rejected: it makes SC-004 and SC-005 unfalsifiable and unrepeatable. A synthetic DOM was rejected: it computes no styles and issues no network requests. |
-| `certifications.js` added to the mandated component and data lists | The constitution names Certifications as a required section; its file tree simply does not enumerate it. The live site has certification content. | Folding certifications into another component was rejected — it would violate Principle III's one-section-per-module rule. |
+| ~~`certifications.js` added to the mandated component and data lists~~ **RESOLVED** | The constitution names Certifications as a required section; its file tree simply did not enumerate it. The live site has certification content. | Folding certifications into another component was rejected — it would violate Principle III's one-section-per-module rule. **Resolved in T083: v1.1.0 enumerates `certifications.js` in both lists.** |
 
 **Not a violation, recorded for clarity**: the three dev dependencies are tooling, not runtime.
 The shipped site retains zero dependencies, which is the guarantee Principle IX actually

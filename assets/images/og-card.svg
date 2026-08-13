@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1B222B"/>
+      <stop offset="1" stop-color="#2E3B4B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#12161C"/>
+  <circle cx="1080" cy="120" r="260" fill="url(#g)" opacity="0.7"/>
+  <circle cx="120" cy="560" r="200" fill="#2E3B4B" opacity="0.5"/>
+  <rect x="80" y="250" width="120" height="8" rx="4" fill="#7FA6D9"/>
+  <text x="80" y="360" font-family="sans-serif" font-size="86" font-weight="700" fill="#E8ECF1">Bruno Oliveira</text>
+  <text x="80" y="432" font-family="sans-serif" font-size="42" font-weight="400" fill="#7FA6D9">Desenvolvedor Fullstack</text>
+  <text x="80" y="500" font-family="sans-serif" font-size="30" font-weight="400" fill="#A6B2C0">Criando soluções robustas e escaláveis.</text>
+</svg>

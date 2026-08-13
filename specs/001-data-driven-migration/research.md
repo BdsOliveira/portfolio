@@ -177,29 +177,55 @@ is required.
 **Decision**: Colours are assigned by *role*, and the role assignment is fixed by the measured
 contrast values rather than by taste.
 
+> **Amended 2026-08-13 (post-implementation).** The owner reviewed the built site and judged
+> the navy/purple/pink palette too decorative for a professional portfolio, and asked for
+> something more sober. The palette below replaces it. The *method* is unchanged — roles are
+> still assigned from measured contrast — and the structural rule from FR-016 still holds: the
+> two darkest colours are surfaces, never text. The superseded palette is recorded at the end
+> of this section.
+
 | Token | Value | Role | Contrast |
 |-------|-------|------|----------|
-| `--color-bg` | `#1A1A40` | page background | — |
-| `--color-surface` | `#270082` | raised surface (cards, nav) | whitesmoke on it: 13.7:1 |
-| `--color-surface-accent` | `#7A0BC0` | emphasis surface, buttons | whitesmoke on it: 7.3:1 |
-| `--color-text` | `#F5F5F5` | all body text | on bg: 15.2:1 |
-| `--color-accent` | `#FA58B6` | accent text, focus ring | on bg: 5.6:1 |
+| `--color-bg` | `#12161C` | page background (graphite) | — |
+| `--color-surface` | `#1B222B` | raised surface (cards, nav) | `--color-text` on it: 13.5:1 |
+| `--color-surface-accent` | `#2E3B4B` | emphasis surface, buttons, chips | `--color-text` on it: 9.6:1 |
+| `--color-text` | `#E8ECF1` | all body text | on bg: 15.3:1 |
+| `--color-text-muted` | `#A6B2C0` | secondary text | on bg: 8.4:1; on surface-accent: 5.3:1 |
+| `--color-accent` | `#7FA6D9` | links, focus ring (steel blue) | on bg: 7.2:1; on surface: 6.4:1; on surface-accent: 4.5:1 |
 
-**Hard constraint discovered**: `--color-accent` (pink) against `--color-surface-accent`
-(purple) is only **2.7:1** and fails AA. Pink text is therefore permitted **only on
-`--color-bg`**, never on a purple surface. This must be encoded as a comment in
-`variables.css` and asserted by the tier-2 contrast audit, because it is the one combination a
-designer would reach for naturally and it does not work.
+**The constraint that disappeared.** The superseded palette had exactly one pairing that failed
+AA — pink text on a purple surface, at 2.7:1 — which had to be encoded as a prohibition in
+`variables.css`, asserted in the audit, and remembered by anyone touching the CSS. The
+desaturated accent clears 4.5:1 against every surface it can land on, so the rule is gone
+rather than merely enforced. That is most of the argument for a restrained accent: it removes a
+class of mistake instead of policing it.
+
+Two consequences follow, both applied:
+
+- `--color-focus` is now the accent rather than plain text. A focus indicator needs 3:1; the
+  accent gives 4.5:1 at worst, so the ring can carry colour.
+- `components.css` no longer needs a per-surface link-colour override. Links are one colour
+  everywhere.
 
 **Rationale**: FR-016 requires the palette's two darkest colours to serve as surfaces rather
-than text. These measurements are what make that requirement concrete and checkable.
+than text. These measurements are what make that requirement concrete and checkable — and the
+tier-2 audit computes the ratios rather than comparing against hardcoded colours, so a future
+palette change cannot silently invalidate the check.
 
-**Alternatives considered**:
+**Alternatives considered** (presented to the owner, with measured contrast for each):
 
-- *Lighten purple until it passes as text on the background*: would need roughly `#B36BE8`,
-  which drifts far enough from `#7A0BC0` that it is no longer the chosen palette.
-- *Use purple as text anyway with a larger type size*: AA large-text threshold is 3:1 and purple
-  reaches only 2.1:1 — it fails even there.
+- *Near-black monochrome, no accent hue at all*: the most austere option. Rejected as having no
+  chromatic identity — and it would have required permanent underlines, since colour alone
+  could no longer distinguish a link (WCAG 1.4.1).
+- *Graphite with a bronze/amber accent*: equally sober and passes AA, but reads editorial
+  rather than technical.
+
+**Superseded palette** (navy/purple/pink), kept for history: `--color-bg: #1A1A40`,
+`--color-surface: #270082`, `--color-surface-accent: #7A0BC0`, `--color-text: #F5F5F5`,
+`--color-accent: #FA58B6`. Purple and navy reached 2.1:1 and 1.1:1 as text on the background,
+failing even the 3:1 large-text threshold, which is why they were surfaces. Lightening purple
+until it passed as text would have needed roughly `#B36BE8` — far enough from `#7A0BC0` that it
+was no longer the chosen palette.
 
 ---
 

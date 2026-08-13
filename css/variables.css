@@ -1,0 +1,96 @@
+/*
+ * Design tokens ONLY. No selectors other than :root, no layout, no components.
+ *
+ * PALETTE — graphite and steel blue. Chosen for restraint: one desaturated accent doing
+ * the work of a colour scheme, on neutral surfaces. Replaced the original navy/purple/pink
+ * palette at the owner's request (see research R6).
+ *
+ * CONTRAST, measured against WCAG 2.1 AA. These numbers decide the role each colour may
+ * play. They are not preferences.
+ *
+ *   --color-bg             #12161C   page background
+ *   --color-surface        #1B222B   raised surface     | --color-text on it: 13.5:1
+ *   --color-surface-accent #2E3B4B   emphasis surface   | --color-text on it:  9.6:1
+ *   --color-text           #E8ECF1   all body text      | on --color-bg:      15.3:1
+ *   --color-text-muted     #A6B2C0   secondary text     | on --color-bg:       8.4:1
+ *                                                       | on --color-surface:  7.4:1
+ *                                                       | on --color-surface-accent: 5.3:1
+ *   --color-accent         #7FA6D9   accent text        | on --color-bg:       7.2:1
+ *                                                       | on --color-surface:  6.4:1
+ *                                                       | on --color-surface-accent: 4.5:1
+ *
+ * The accent clears AA on every surface it can land on, so unlike the palette this
+ * replaced there is no prohibited pairing to remember. That is most of the argument for
+ * a desaturated accent: the restriction disappears rather than needing to be policed.
+ *
+ * --color-surface and --color-surface-accent remain surfaces, never text: against
+ * --color-bg they reach 1.1:1 and 1.6:1, nowhere near the 3:1 large-text threshold.
+ */
+
+:root {
+  /* Palette */
+  --color-bg: #12161C;
+  --color-surface: #1B222B;
+  --color-surface-accent: #2E3B4B;
+  --color-text: #E8ECF1;
+  --color-text-muted: #A6B2C0;
+  --color-accent: #7FA6D9;
+
+  /* Semantic roles. Aliases only — no new colour values. */
+  --color-heading: var(--color-text);
+  --color-link: var(--color-accent);
+  --color-link-hover: var(--color-text);
+  --color-border: var(--color-surface-accent);
+  /* The accent clears 4.5:1 on every surface here, comfortably above the 3:1 a focus
+     indicator needs, so the ring can carry colour instead of falling back to plain text. */
+  --color-focus: var(--color-accent);
+
+  /* Spacing scale */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  /* Type scale */
+  --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --text-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+
+  /* Shape */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-pill: 999rem;
+  --border-width: 1px;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 3px;
+
+  /* Elevation. Kept here so no shadow colour is authored elsewhere (S-1). */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 0.35);
+
+  /* Layout */
+  --content-max: 72rem;
+  --measure: 65ch;
+  --gutter: var(--space-md);
+
+  /* Motion */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}
