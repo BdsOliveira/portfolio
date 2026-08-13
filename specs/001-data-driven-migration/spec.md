@@ -13,10 +13,14 @@
 The repository today is internally inconsistent, and this migration exists to resolve that:
 
 - `index.html` is a self-contained page whose entire content is hardcoded in markup. It pulls
-  its styling from a third-party CDN at request time and its typeface from a second CDN.
-- `css/style.css` and `css/project-component-style.css` describe a **different, older visual
-  design** (navy/purple palette) than the one `index.html` currently renders (dark
-  grey/blue palette). **Neither CSS file is referenced by `index.html`.**
+  its styling from a third-party CDN at request time and its typeface from a second CDN. It
+  renders a dark grey/blue design.
+- `css/style.css` and `css/project-component-style.css` describe a **different visual design**
+  — the navy/purple palette that this feature restores. **Neither file is referenced by
+  `index.html`.** They are also incomplete: they style a navigation menu, project cards,
+  buttons, and a footer, and they reference classes (`.lottie`, `.li-iten-home`, `.scroll-iten`,
+  `menu`) belonging to a page structure that no longer exists. They contain no styling for the
+  skills grid, certifications, contact form, or hero section as those sections exist today.
 - `js/Project.js`, `js/projectCard.js`, and `js/createProjectComponentYourSelfLikeMagic.js`
   implement a project-card custom element that fetches project records from a remote host over
   an unencrypted connection. **None of these scripts are referenced by `index.html`.**
@@ -26,6 +30,19 @@ The repository today is internally inconsistent, and this migration exists to re
 
 In short: roughly half the repository is dead code describing a design the live page does not
 use, and the live page hardcodes every piece of content it displays.
+
+## Scope Note: this is a re-theme, not a pure restructuring
+
+The chosen design direction is the navy/purple palette, which the live page does not currently
+use. This feature therefore changes two things at once:
+
+- **Content and structure**: preserved and moved into data (the migration proper).
+- **Visual design**: intentionally changed from the current dark grey/blue appearance to the
+  navy/purple palette.
+
+Because the navy stylesheets cover only a fraction of the sections the site now has, the design
+is **re-derived** from that palette and typography into a complete, mobile-first system — not
+copied verbatim. The old stylesheets are a colour and type reference, not a specification.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -58,20 +75,25 @@ the page and that no markup or rendering file was modified in the process.
 5. **Given** a content entry is missing a required field, **When** the page renders, **Then**
    the failure is surfaced to the owner during development rather than silently producing a
    blank card.
+6. **Given** a content collection is empty, **When** the page renders, **Then** its section is
+   omitted entirely, and **When** the owner later adds the first entry, **Then** the section
+   appears with no code change.
 
 ---
 
-### User Story 2 - Visitor sees the same portfolio after the migration (Priority: P2)
+### User Story 2 - Visitor finds the same portfolio in a new theme (Priority: P2)
 
-A visitor who saw the portfolio before the migration visits it afterwards and finds the same
-content, the same sections in the same order, and the same visual design. Nothing they could
-previously read or click is missing.
+A visitor who saw the portfolio before returns afterwards. Everything they could previously
+read or click is still there, in the same order — but the site now wears the navy/purple
+design instead of the dark grey/blue one.
 
-**Why this priority**: The migration is a restructuring, not a redesign. Silent content or
-behavior loss would make the migration a net negative regardless of how clean the structure is.
+**Why this priority**: Content loss would make the migration a net negative no matter how clean
+the resulting structure is. The visual change is intentional and expected; content and
+navigation changes are not.
 
-**Independent Test**: Capture the rendered page before and after the migration at mobile,
-tablet, and desktop widths, and compare content inventory and layout side by side.
+**Independent Test**: Inventory the pre-migration page's sections, text strings, and link
+destinations, then confirm every one is present post-migration. Separately confirm the applied
+theme matches the navy/purple palette at mobile, tablet, and desktop widths.
 
 **Acceptance Scenarios**:
 
@@ -80,11 +102,13 @@ tablet, and desktop widths, and compare content inventory and layout side by sid
    footer) is present after, in the same order.
 2. **Given** the pre-migration page, **When** content is inventoried, **Then** every visible
    text string, link destination, and skill tag present before is present after.
-3. **Given** the migrated page, **When** viewed at mobile, tablet, and desktop widths,
-   **Then** the layout matches the pre-migration layout at each width.
-4. **Given** the years-of-experience figure shown in the hero, **When** the page loads in any
+3. **Given** the migrated page, **When** its colours and typeface are inspected, **Then** they
+   follow the navy/purple palette and its designated typeface.
+4. **Given** the migrated page, **When** viewed at mobile, tablet, and desktop widths, **Then**
+   every section is laid out deliberately for that width, with no unstyled or broken region.
+5. **Given** the years-of-experience figure shown in the hero, **When** the page loads in any
    future year, **Then** it still computes correctly rather than being frozen at a fixed value.
-5. **Given** the migrated page, **When** loaded with no network access to any third party,
+6. **Given** the migrated page, **When** loaded with no network access to any third party,
    **Then** it renders fully and correctly styled.
 
 ---
@@ -94,10 +118,12 @@ tablet, and desktop widths, and compare content inventory and layout side by sid
 A visitor navigating by keyboard, or listening via a screen reader, can reach and understand
 every section, every link, and every form field.
 
-**Why this priority**: Accessibility is non-negotiable under the project constitution, and the
-current page has concrete defects (form fields identified only by disappearing placeholder
-text, a call-to-action that looks like a button but goes nowhere, decorative images with no
-text alternative) that a restructuring is the natural moment to fix.
+**Why this priority**: Accessibility is non-negotiable under the project constitution. Both the
+current page and the design being restored contain concrete defects — form fields identified
+only by disappearing placeholder text, a call-to-action that looks like a button but goes
+nowhere, hover-only tooltips, icon glyphs acting as controls, no focus styling anywhere, and a
+navigation item hidden entirely below 720px. A restructuring is the moment to fix these, and
+none may be carried forward.
 
 **Independent Test**: Traverse the entire page using only the keyboard, then again with a
 screen reader, without using a mouse. Every interactive element must be reachable, visibly
@@ -118,6 +144,10 @@ focused, and announced with a meaningful name.
    images are announced with a description and purely decorative ones are skipped.
 6. **Given** any text on the page, **When** its contrast against its background is measured,
    **Then** it meets the WCAG 2.1 AA threshold.
+7. **Given** supplementary information shown on pointer hover, **When** a keyboard-only visitor
+   reaches that element, **Then** the same information is available to them.
+8. **Given** any viewport width, **When** the navigation is rendered, **Then** every navigation
+   destination remains reachable.
 
 ---
 
@@ -150,7 +180,7 @@ to meaningful content. Paste the published URL into a link-preview tool and insp
 
 ### Edge Cases
 
-- **A content collection is empty** (for example, no education entries yet): the section is
+- **A content collection is empty** (Experience and Education ship empty): the section is
   omitted entirely rather than rendering an empty heading over blank space.
 - **A content entry is marked not-visible**: it is excluded from rendering, and the surrounding
   layout closes up with no gap. (The current project data model already carries a visibility
@@ -160,12 +190,17 @@ to meaningful content. Paste the published URL into a link-preview tool and insp
 - **A project has fewer technology tags than another**: the card renders only the tags present,
   with no empty tag chips. (The current implementation renders five fixed tag slots regardless
   of how many are filled — this defect must not be carried forward.)
+- **A project has no live address or no source address**: the corresponding link is omitted
+  rather than rendering a link to nowhere.
 - **Rendering fails entirely**: the visitor still sees the owner's name, professional role, and
   primary contact links rather than a blank page.
 - **A visitor opens the page with an extremely long project title or description**: text wraps
   within its card rather than overflowing horizontally or forcing the page to scroll sideways.
 - **A visitor has reduced-motion enabled**: hover and transition effects respect that
   preference.
+- **A viewport falls between defined breakpoints**: the layout remains correct. (The current
+  stylesheets define rules below 720px and above 740px, leaving widths in between unstyled —
+  this gap must not be carried forward.)
 
 ## Requirements *(mandatory)*
 
@@ -187,88 +222,100 @@ to meaningful content. Paste the published URL into a link-preview tool and insp
 - **FR-006**: Each content type MUST define which of its fields are required and which are
   optional; missing optional fields MUST result in the corresponding element being omitted,
   and missing required fields MUST be surfaced as an error during development.
+- **FR-007**: A section whose content collection is empty MUST render nothing at all, and MUST
+  begin rendering as soon as a first entry is added, with no code change.
 
 **Structure**
 
-- **FR-007**: The repository MUST conform to the directory layout mandated by the project
+- **FR-008**: The repository MUST conform to the directory layout mandated by the project
   constitution, with content data, rendering logic, page structure, styles, and static assets
   each in their designated location.
-- **FR-008**: The page MUST define semantic structure and section containers only; it MUST NOT
+- **FR-009**: The page MUST define semantic structure and section containers only; it MUST NOT
   duplicate content that is rendered from data.
-- **FR-009**: Each portfolio section MUST be an independent unit that receives its content as
+- **FR-010**: Each portfolio section MUST be an independent unit that receives its content as
   input and can be rendered and verified on its own, without depending on any other section.
-- **FR-010**: Sections MUST NOT share mutable global state; any coordination between them MUST
+- **FR-011**: Sections MUST NOT share mutable global state; any coordination between them MUST
   be explicit.
-- **FR-011**: Design values (colors, spacing, typography scales) MUST be defined once as named
+- **FR-012**: Design values (colours, spacing, typography scales) MUST be defined once as named
   tokens and referenced everywhere else, rather than repeated as literal values.
-- **FR-012**: All code, styles, and assets that are dead after the migration MUST be removed
+- **FR-013**: All code, styles, and assets that are dead after the migration MUST be removed
   from the repository, not left in place alongside their replacements.
 
-**Preservation**
+**Content preservation and re-theme**
 
-- **FR-013**: Every section, visible text string, link destination, and skill tag present
+- **FR-014**: Every section, visible text string, link destination, and skill tag present
   before the migration MUST be present after it.
-- **FR-014**: The visual design MUST match the pre-migration appearance at mobile, tablet, and
-  desktop widths.
-- **FR-015**: The years-of-experience figure MUST continue to be derived at page load rather
+- **FR-015**: The visual design MUST apply the navy/purple palette and its designated typeface,
+  re-derived into a complete system covering every section the site has, including the sections
+  the reference stylesheets never covered.
+- **FR-016**: Palette colours MUST be assigned roles that satisfy the contrast requirement in
+  FR-030. The two darkest palette colours do not meet the AA threshold as text against the page
+  background and MUST therefore be used as surface and fill colours behind light text, not as
+  text or icon colours on the page background.
+- **FR-017**: The years-of-experience figure MUST continue to be derived at page load rather
   than hardcoded, so it stays correct over time.
-- **FR-016**: The site's content language MUST remain unchanged.
+- **FR-018**: The site's content language MUST remain unchanged.
 
 **Independence from third parties**
 
-- **FR-017**: The published page MUST render fully and correctly styled without requesting any
+- **FR-019**: The published page MUST render fully and correctly styled without requesting any
   resource from a host outside the portfolio's own domain.
-- **FR-018**: Typefaces MUST be served from the portfolio's own domain.
-- **FR-019**: Presentation MUST be produced by the portfolio's own stylesheets rather than by a
+- **FR-020**: Typefaces MUST be served from the portfolio's own domain.
+- **FR-021**: Presentation MUST be produced by the portfolio's own stylesheets rather than by a
   third-party styling service fetched at page load.
+- **FR-022**: Icons MUST be served as local assets rather than fetched from a third-party icon
+  service.
 
 **Accessibility**
 
-- **FR-020**: The page MUST expose distinct navigation, main-content, and footer regions.
-- **FR-021**: Headings MUST form a single correctly nested outline with exactly one top-level
+- **FR-023**: The page MUST expose distinct navigation, main-content, and footer regions.
+- **FR-024**: Headings MUST form a single correctly nested outline with exactly one top-level
   heading and no skipped levels.
-- **FR-022**: Every interactive element MUST be reachable and operable by keyboard, in a
+- **FR-025**: Every interactive element MUST be reachable and operable by keyboard, in a
   logical order, with no keyboard trap.
-- **FR-023**: Every focusable element MUST display a clearly visible focus indicator.
-- **FR-024**: Every form field MUST have a persistent label that is not dependent on
+- **FR-026**: Every focusable element MUST display a clearly visible focus indicator.
+- **FR-027**: Every form field MUST have a persistent label that is not dependent on
   placeholder text.
-- **FR-025**: Every element that behaves as a link MUST be a link, and every element that
+- **FR-028**: Every element that behaves as a link MUST be a link, and every element that
   behaves as a button MUST be a button; controls MUST NOT merely look like the thing they are
-  not.
-- **FR-026**: Meaningful images and icons MUST carry a text alternative; decorative ones MUST
+  not, and icon glyphs MUST NOT act as controls.
+- **FR-029**: Meaningful images and icons MUST carry a text alternative; decorative ones MUST
   be hidden from assistive technology.
-- **FR-027**: All text MUST meet the WCAG 2.1 AA contrast threshold against its background.
-- **FR-028**: Motion and transition effects MUST respect a visitor's reduced-motion preference.
+- **FR-030**: All text MUST meet the WCAG 2.1 AA contrast threshold against its background.
+- **FR-031**: Information revealed on pointer hover MUST also be available to keyboard users.
+- **FR-032**: Motion and transition effects MUST respect a visitor's reduced-motion preference.
 
 **Responsiveness and performance**
 
-- **FR-029**: The layout MUST be authored for the smallest supported viewport first and add
+- **FR-033**: The layout MUST be authored for the smallest supported viewport first and add
   complexity upward.
-- **FR-030**: No content or control may be hidden on small screens as a substitute for
+- **FR-034**: No content or control may be hidden on small screens as a substitute for
   designing it responsively.
-- **FR-031**: The page MUST NOT scroll horizontally at any supported viewport width.
-- **FR-032**: Images MUST be served at appropriate dimensions in modern formats, MUST reserve
+- **FR-035**: The layout MUST be correct at every width across the supported range, with no
+  unstyled gap between breakpoints.
+- **FR-036**: The page MUST NOT scroll horizontally at any supported viewport width.
+- **FR-037**: Images MUST be served at appropriate dimensions in modern formats, MUST reserve
   their space to prevent layout shift, and MUST defer loading when below the initial viewport.
-- **FR-033**: The page MUST remain fully static, deployable to a content delivery network with
+- **FR-038**: The page MUST remain fully static, deployable to a content delivery network with
   no server-side runtime.
 
 **Discoverability**
 
-- **FR-034**: The page MUST provide a unique descriptive title and a summary description.
-- **FR-035**: The page MUST provide social sharing metadata including a title, description, and
+- **FR-039**: The page MUST provide a unique descriptive title and a summary description.
+- **FR-040**: The page MUST provide social sharing metadata including a title, description, and
   preview image.
-- **FR-036**: The page MUST declare its content language and its canonical address.
-- **FR-037**: The owner's name, professional role, and primary links MUST be present in the
+- **FR-041**: The page MUST declare its content language and its canonical address.
+- **FR-042**: The owner's name, professional role, and primary links MUST be present in the
   served document rather than existing only after rendering logic runs.
-- **FR-038**: Link text MUST describe its destination.
+- **FR-043**: Link text MUST describe its destination.
 
 **Verification**
 
-- **FR-039**: Automated checks MUST verify that each section, given known content, produces the
+- **FR-044**: Automated checks MUST verify that each section, given known content, produces the
   expected result.
-- **FR-040**: Automated checks MUST verify that every content entry satisfies its required
+- **FR-045**: Automated checks MUST verify that every content entry satisfies its required
   fields, field types, and link validity, and references no missing assets.
-- **FR-041**: Automated checks MUST be written against section contracts and content schemas,
+- **FR-046**: Automated checks MUST be written against section contracts and content schemas,
   never against specific content values, so that changing portfolio content does not require
   rewriting checks for unrelated sections.
 
@@ -280,13 +327,14 @@ to meaningful content. Paste the published URL into a link-preview tool and insp
 - **Social Link**: A named external presence — platform name, destination address, and icon.
   Belongs to Profile.
 - **Experience**: A professional role — employer, title, start and end dates (end may be
-  ongoing), summary, and notable achievements.
+  ongoing), summary, and notable achievements. Ships as an empty collection.
 - **Project**: A piece of work — title, description, technologies used (variable count), source
   repository address, live address, preview image, and a visibility flag controlling whether it
-  is shown.
-- **Skill Group**: A named category of competencies (for example Frontend, Backend, Databases,
-  Tooling, Mobile) containing a variable-length list of individual skills.
-- **Education**: A course of study — institution, qualification, field, and period.
+  is shown. Content supplied by the owner (see Dependencies).
+- **Skill Group**: A named category of competencies (Frontend, Backend, Databases, Tooling,
+  Mobile) containing a variable-length list of individual skills.
+- **Education**: A course of study — institution, qualification, field, and period. Ships as an
+  empty collection.
 - **Certification**: An award or credential — title, issuing body, date or score, an icon, and
   an optional verification address.
 
@@ -299,8 +347,8 @@ to meaningful content. Paste the published URL into a link-preview tool and insp
   more than one file per item.
 - **SC-002**: A reviewer comparing the pre- and post-migration pages finds zero missing
   sections, zero missing text strings, and zero missing or changed link destinations.
-- **SC-003**: The migrated page is visually indistinguishable from the pre-migration page at
-  mobile, tablet, and desktop widths.
+- **SC-003**: Every section renders in the navy/purple theme at mobile, tablet, and desktop
+  widths, with zero unstyled or visually broken regions.
 - **SC-004**: A visitor can reach and operate 100% of interactive elements using only the
   keyboard, with a visible focus indicator on every one.
 - **SC-005**: An automated accessibility audit reports zero violations at the WCAG 2.1 AA level.
@@ -318,29 +366,46 @@ to meaningful content. Paste the published URL into a link-preview tool and insp
   sections to fail.
 - **SC-013**: With rendering logic disabled, a visitor still sees the owner's name, professional
   role, and primary contact links.
+- **SC-014**: Adding a first Experience or Education entry makes that section appear with zero
+  code changes.
+
+## Dependencies
+
+- **Real project content from the owner** — the Projects section ships with the owner's actual
+  projects rather than the placeholder currently on the page. Each project needs: title,
+  description, technologies used, source repository address, live address (if any), and a
+  preview image. Implementation of the Projects section cannot be completed until this content
+  is supplied. Every other section is unblocked, and the Projects section can be built and
+  verified against sample content in the meantime.
+- **A preview image for social sharing** (FR-040) and a **profile image** (currently a grey
+  placeholder box) are needed to fully satisfy SC-009.
+- **The published canonical address** is needed for FR-041.
 
 ## Assumptions
 
-- **Design baseline**: The visual design to preserve is the one a visitor sees today — the dark
-  grey/blue page that `index.html` currently renders. The navy/purple design in the orphaned
-  stylesheets represents an abandoned earlier version and is treated as dead code to be removed,
-  not as a design to restore. *(See Q1 below — this materially affects scope.)*
+- **Design baseline**: The navy/purple palette (`#1A1A40`, `#270082`, `#7A0BC0`, `#FA58B6`,
+  whitesmoke) and the Poppins typeface are the design direction. The current dark grey/blue
+  appearance is intentionally discarded. Because the reference stylesheets cover only a
+  fraction of the site's present sections and target a page structure that no longer exists,
+  they are treated as a colour and type reference rather than as a literal specification.
+- **Palette roles**: Light text on dark surfaces. The two darkest palette colours serve as
+  surfaces and fills; the lightest two serve as text and accent. This preserves the palette
+  while satisfying the contrast requirement.
 - **Third-party styling service**: The page's current dependence on a CDN-delivered styling
-  framework is incompatible with the project constitution's vanilla-first and performance
-  principles. The migration reproduces the current appearance using the project's own
-  stylesheets and design tokens. This is the single largest piece of work in the migration.
-- **Project data source**: Project content moves into a local content data file. The remote
+  framework is incompatible with the constitution's vanilla-first and performance principles,
+  and is removed. Reproducing the layout with the project's own stylesheets and design tokens
+  is the single largest piece of work in this feature.
+- **Absent sections**: Experience and Education get their content data files and rendering
+  units created and wired, shipping with empty collections so nothing renders until the owner
+  adds a first entry. An About section is treated as part of the hero's summary content rather
+  than as a separate section, since no distinct About content exists.
+- **Project data source**: Project content lives in a local content data file. The remote
   project service the orphaned scripts referenced is unreachable over a secure connection and
   would be blocked on the published site; wiring up a live content source is a separate future
   feature, noted in the repository's `next-steps.txt`.
-- **Contact form**: The contact form has no submission destination today. The migration
-  preserves it as a visible, correctly labeled, accessible form and does not introduce a
-  submission backend. Making it actually send messages is a separate feature.
-- **Sections present**: The migration covers the sections that exist today (navigation, hero,
-  skills, projects, certifications, contact, footer). Sections named in the constitution's
-  component list but absent from the site today — About, Experience, Education — get their
-  content data files and rendering units created and wired, so adding a first entry later is
-  purely a content change. *(See Q2 below.)*
+- **Contact form**: The form has no submission destination today. This feature preserves it as
+  a visible, correctly labeled, accessible form and does not introduce a submission backend.
+  Making it actually send messages is a separate feature.
 - **Rendering approach**: The owner's name, professional role, and primary links appear in the
   served document; the remaining repeatable content is rendered from data at load. This
   satisfies the constitution's progressive-enhancement principle without introducing a build
@@ -349,26 +414,8 @@ to meaningful content. Paste the published URL into a link-preview tool and insp
   browsers lacking modern layout primitives.
 - **Language**: The site's content remains in Brazilian Portuguese. Internationalization is out
   of scope.
-- **Content accuracy**: Existing content is migrated as-is. Correcting or expanding the actual
-  portfolio content (for example, the placeholder profile image, or the Projects section's
-  single example project) is a content task, not part of this migration. *(See Q3 below.)*
-- **Known defects fixed in passing**: Two defects in the current page are corrected as part of
-  the migration because carrying them forward would violate the constitution — the social icon
-  that renders the wrong platform's symbol, and the hero call-to-action that is a button leading
-  nowhere.
-
-## Outstanding Clarifications
-
-- **Q1**: Confirm the design baseline — preserve the current dark grey/blue page and delete the
-  orphaned navy/purple stylesheets, or restore the navy/purple design instead?
-  [NEEDS CLARIFICATION: two conflicting designs exist in the repository; the choice determines
-  which stylesheets are rebuilt and which are deleted]
-- **Q2**: Confirm the treatment of the About, Experience, and Education sections, which the
-  constitution names but the live site does not have.
-  [NEEDS CLARIFICATION: create them empty and hidden until content exists, create them with real
-  content now, or leave them out of this migration entirely]
-- **Q3**: Confirm whether the Projects section ships with real project content or with the
-  single placeholder project currently on the page.
-  [NEEDS CLARIFICATION: the live page shows one example project and an HTML comment saying "add
-  2 more"; the migration can carry that placeholder forward or the owner can supply real
-  projects]
+- **Known defects fixed in passing**: Defects that would violate the constitution if carried
+  forward are corrected as part of this work — the social icon rendering the wrong platform's
+  symbol, the hero call-to-action that is a button leading nowhere, the hover-only tooltips,
+  the icon glyphs used as controls, the navigation item hidden below 720px, the fixed five-slot
+  technology tags, and the unstyled gap between the 720px and 740px breakpoints.
