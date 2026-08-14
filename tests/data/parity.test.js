@@ -140,7 +140,7 @@ const CERTIFICATION_CONTENT = [
   'II Maratona de Programação da PUC-GOIÁS',
   'Medalha de Prata - 2017',
   'EF SET English Certificate',
-  'Score 49/100 (B1 Intermediate)',
+  'Score 51/100 (B2 Upper Intermediate) - 2025',
 ];
 
 // content-inventory.md §2. Employers, titles, locations and rendered periods; the achievement

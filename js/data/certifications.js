@@ -9,7 +9,8 @@ export default [
   {
     id: 'ef-set-english-certificate',
     title: 'EF SET English Certificate',
-    detail: 'Score 49/100 (B1 Intermediate)',
+    detail: 'Score 51/100 (B2 Upper Intermediate) - 2025',
     icon: 'icon-certificate',
+    verificationUrl: 'https://cert.efset.org/wAnaPo',
   },
 ];
