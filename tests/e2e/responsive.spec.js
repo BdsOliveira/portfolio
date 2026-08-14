@@ -132,3 +132,110 @@ for (const viewport of VIEWPORTS) {
     });
   });
 }
+
+/**
+ * The header's row count, with EVERY navigation destination revealed (FR-015, SC-010, N4-3).
+ *
+ * Two collections ship empty today, so the live page shows eight of eleven items and would pass
+ * this trivially — which is exactly the wrong time to find out that populating them breaks the
+ * header. Every item is force-revealed first, so this measures the worst case rather than the
+ * current one.
+ *
+ * Why it matters beyond looks: css/variables.css sizes `--anchor-offset` against a two-row header.
+ * A third row means every anchor link lands with its heading under the header (FR-014), and
+ * nothing else in the suite would notice.
+ *
+ * The 768–1000px band is where the row already wraps, so it is sampled more finely than the rest.
+ */
+const WIDTHS = [320, 375, 640, 768, 820, 900, 1000, 1024, 1280, 1440];
+
+test.describe('the navigation fits the header', () => {
+  test('no width takes more rows than the two-row worst case (FR-015, SC-010)', async ({
+    page,
+  }) => {
+    const offenders = [];
+
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+
+      const measured = await page.evaluate(() => {
+        for (const item of document.querySelectorAll('[data-nav-for]')) item.removeAttribute('hidden');
+
+        const list = document.getElementById('site-nav-list');
+        const header = document.querySelector('.site-header');
+
+        // Collapsed into the disclosure at this width: the list is not laid out as a row at all,
+        // so a row count would be meaningless. The header is one row by construction there.
+        if (getComputedStyle(list).display === 'none') return { rows: 1, collapsed: true };
+
+        // Distinct vertical positions of the items themselves — the only honest way to count
+        // wrapped rows in a flex row.
+        const tops = new Set(
+          [...list.querySelectorAll('li')]
+            .filter((item) => !item.hasAttribute('hidden'))
+            .map((item) => Math.round(item.getBoundingClientRect().top)),
+        );
+
+        return {
+          rows: tops.size,
+          collapsed: false,
+          headerHeight: Math.round(header.getBoundingClientRect().height),
+        };
+      });
+
+      if (measured.rows > 2) offenders.push({ width, ...measured });
+    }
+
+    expect(
+      offenders,
+      'the header takes a third row — see research R3: move the nav disclosure breakpoint from 48rem to 64rem',
+    ).toEqual([]);
+  });
+
+  /**
+   * FR-014, N4-4. The section sits directly under the hero, so its heading is the one most likely
+   * to end up behind the sticky header when a hash link is followed — `--anchor-offset` is what
+   * prevents it, and it is sized by hand rather than measured.
+   */
+  test('following #talks leaves its heading clear of the sticky header (FR-014)', async ({
+    page,
+  }) => {
+    for (const width of [375, 768, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+
+      // The section is removed while the collection is empty (FR-013), so reveal it for the
+      // measurement rather than skipping the assertion — a skipped test here is a test that stops
+      // covering this the moment the owner adds a talk.
+      const present = await page.evaluate(() => {
+        const section = document.getElementById('talks');
+        if (!section) return false;
+        section.removeAttribute('hidden');
+        return true;
+      });
+
+      if (!present) {
+        // Section absent from the served document entirely would be a structure defect, and
+        // tests/e2e/structure.spec.js owns that assertion. Nothing to measure here.
+        continue;
+      }
+
+      await page.evaluate(() => {
+        document.querySelector('a[href="#talks"]').click();
+      });
+      await page.waitForTimeout(400);
+
+      const clear = await page.evaluate(() => {
+        const heading = document.getElementById('talks-heading');
+        const header = document.querySelector('.site-header');
+
+        return (
+          heading.getBoundingClientRect().top >= header.getBoundingClientRect().bottom - 1
+        );
+      });
+
+      expect(clear, `#talks-heading is under the sticky header at ${width}px`).toBe(true);
+    }
+  });
+});

@@ -18,6 +18,7 @@ import experiences from '../../js/data/experiences.js';
 import education from '../../js/data/education.js';
 import philosophy from '../../js/data/philosophy.js';
 import community from '../../js/data/community.js';
+import talks from '../../js/data/talks.js';
 
 const REPO_ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const options = { assetExists: (path) => existsSync(`${REPO_ROOT}${path}`) };
@@ -30,6 +31,7 @@ const COLLECTIONS = [
   ['education', education, SCHEMAS.Education],
   ['philosophy', philosophy, SCHEMAS.Principle],
   ['community', community, SCHEMAS.CommunityActivity],
+  ['talks', talks, SCHEMAS.Talk],
 ];
 
 describe('data integrity', () => {
@@ -55,6 +57,7 @@ describe('data integrity', () => {
       'education.js',
       'philosophy.js',
       'community.js',
+      'talks.js',
     ];
 
     // Comments are prose about the data, not code. Strip them so the word "document" in a
@@ -233,6 +236,107 @@ describe('data integrity', () => {
         options,
       );
       assert.ok(errors.some((error) => error.includes('precedes')));
+    });
+
+    /**
+     * A talk is stated to the day, so the ways its date goes wrong are its own: a month-precision
+     * string, a locale-formatted one, a month that does not exist, a day that does not exist in
+     * that month, and a talk that has not happened yet.
+     *
+     * The `2025-02-30` case is the one worth having. It matches the pattern perfectly and names a
+     * day that never existed — precisely the mistake a hand-authored date file produces, and
+     * precisely what a regex cannot see (data-model.md, contract D4-2).
+     */
+    const talkWith = (fields) => [
+      {
+        id: 'probe',
+        title: 'X',
+        date: '2025-03-12',
+        description: 'Y',
+        photo: 'assets/images/probe.webp',
+        photoAlt: 'Z',
+        ...fields,
+      },
+    ];
+
+    for (const [label, date] of [
+      ['month-precision', '2025-03'],
+      ['a single-digit month', '2025-3-12'],
+      ['a locale-formatted date', '12/03/2025'],
+      ['an impossible month', '2025-13-01'],
+    ]) {
+      test(`rejects ${label} as a talk date`, () => {
+        const errors = validateCollection(talkWith({ date }), SCHEMAS.Talk, {
+          assetExists: () => true,
+        });
+        assert.ok(errors.some((error) => error.includes('YYYY-MM-DD')));
+      });
+    }
+
+    test('rejects a day that does not exist in that month', () => {
+      const errors = validateCollection(talkWith({ date: '2025-02-30' }), SCHEMAS.Talk, {
+        assetExists: () => true,
+      });
+      assert.ok(errors.some((error) => error.includes('real calendar date')));
+    });
+
+    test('rejects a talk dated in the future', () => {
+      const nextYear = new Date().getFullYear() + 1;
+      const errors = validateCollection(talkWith({ date: `${nextYear}-03-12` }), SCHEMAS.Talk, {
+        assetExists: () => true,
+      });
+      assert.ok(errors.some((error) => error.includes('future')));
+    });
+
+    test('accepts a talk dated today', () => {
+      const now = new Date();
+      const date = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0'),
+      ].join('-');
+
+      const errors = validateCollection(talkWith({ date }), SCHEMAS.Talk, {
+        assetExists: () => true,
+      });
+      assert.deepEqual(errors, []);
+    });
+
+    test('rejects a talk photograph that is not in the repository', () => {
+      const errors = validateCollection(
+        talkWith({ photo: 'assets/images/definitely-not-here.webp' }),
+        SCHEMAS.Talk,
+        options,
+      );
+      assert.ok(errors.some((error) => error.includes('does not exist')));
+    });
+
+    test('rejects a talk photograph hosted outside assets/', () => {
+      const errors = validateCollection(
+        talkWith({ photo: 'https://www.instagram.com/p/probe/' }),
+        SCHEMAS.Talk,
+        options,
+      );
+      assert.ok(errors.some((error) => error.includes('under assets/')));
+    });
+
+    // The photograph carries meaning, so it is never alt="". Unlike WorkEntry.imageAlt this is
+    // required outright rather than conditionally, because the photograph itself is required.
+    test('rejects a talk photograph without its description', () => {
+      const [entry] = talkWith({});
+      delete entry.photoAlt;
+
+      const errors = validateCollection([entry], SCHEMAS.Talk, { assetExists: () => true });
+      assert.ok(errors.some((error) => error.includes('photoAlt')));
+    });
+
+    test('rejects a talk link whose url is not https:', () => {
+      const errors = validateCollection(
+        talkWith({ link: { label: 'Assistir à gravação de X', url: 'http://example.com/v' } }),
+        SCHEMAS.Talk,
+        { assetExists: () => true },
+      );
+      assert.ok(errors.some((error) => error.includes('https:')));
     });
   });
 

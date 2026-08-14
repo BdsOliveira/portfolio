@@ -16,6 +16,7 @@ import { renderExperience } from '../../js/components/experience.js';
 import { renderEducation } from '../../js/components/education.js';
 import { renderPhilosophy } from '../../js/components/philosophy.js';
 import { renderCommunity } from '../../js/components/community.js';
+import { renderTalks } from '../../js/components/talks.js';
 import { renderCopyrightYear } from '../../js/components/identity.js';
 
 import { createDocument, mountFragment, REPO_ROOT } from './_setup.js';
@@ -60,6 +61,13 @@ const COMPONENTS = [
     file: 'community.js',
     render: renderCommunity,
     data: fixtures.community,
+    collection: true,
+  },
+  {
+    name: 'talks',
+    file: 'talks.js',
+    render: renderTalks,
+    data: fixtures.talks,
     collection: true,
   },
   {
