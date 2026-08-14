@@ -7,7 +7,16 @@
 
 const KEBAB = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const YEAR_MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
+const DATE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Today in the local zone, as `AAAA-MM-DD`, so `maxToday` compares string to string. */
+function today() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+}
 
 /**
  * Field types. Each returns an error string, or null when the value is acceptable.
@@ -56,6 +65,24 @@ const TYPES = {
   'year-month': (v) => {
     if (typeof v !== 'string') return `expected a string, got ${typeof v}`;
     return YEAR_MONTH.test(v) ? null : `"${v}" is not YYYY-MM`;
+  },
+  /**
+   * A single calendar day. Distinct from `year-month`: a talk happens on a date, and demanding
+   * only the month would make the data say less than the owner knows (data-model.md).
+   *
+   * The round-trip is the point, not belt-and-braces. `2025-02-30` and `2025-11-31` match the
+   * pattern perfectly and name days that never existed — which is exactly the error a
+   * hand-authored date file produces, and exactly what a regex cannot see. Date parses them by
+   * rolling over into the next month, so re-rendering the parsed value and comparing catches it.
+   */
+  date: (v) => {
+    if (typeof v !== 'string') return `expected a string, got ${typeof v}`;
+    if (!DATE.test(v)) return `"${v}" is not YYYY-MM-DD`;
+
+    const parsed = new Date(`${v}T00:00:00Z`);
+    if (Number.isNaN(parsed.getTime())) return `"${v}" is not a real date`;
+
+    return parsed.toISOString().slice(0, 10) === v ? null : `"${v}" is not a real calendar date`;
   },
 };
 
@@ -268,6 +295,38 @@ export const SCHEMAS = {
     },
   },
 
+  /**
+   * One speaking engagement the owner delivered — the "Palestras" section.
+   *
+   * `photo`/`photoAlt` are two flat required fields rather than a composite like
+   * Certification.evidence, and that difference is load-bearing. Certification.evidence renders at
+   * the photograph's own proportions, so it needs the intrinsic width and height to reserve the
+   * right box. A talk photograph renders in a fixed 16:9 frame that the component supplies from
+   * constants, so per-entry dimensions would describe a shape the page never draws — data the
+   * renderer discards, and one more number the owner could state wrongly (research R5).
+   *
+   * `link` reuses the existing Link shape and is singular: a talk has one canonical destination,
+   * and one label that has to identify where it goes is easier to get right than several.
+   */
+  Talk: {
+    name: 'Talk',
+    kind: 'collection',
+    fields: {
+      id: { type: 'id', required: true },
+      title: { type: 'string', required: true },
+      date: { type: 'date', required: true, maxToday: true },
+      description: { type: 'string', required: true },
+      // Typed `asset`, so the photograph lives in this repository, where it cannot rot, move
+      // behind a login, or change under us — the same reasoning as Certification.evidence.src.
+      photo: { type: 'asset', required: true },
+      // Required, not optional: this photograph carries meaning, so it is never `alt=""`. Whether
+      // the text describes the image rather than repeating the title is a review gate.
+      photoAlt: { type: 'string', required: true },
+      event: { type: 'string', required: false },
+      link: { type: 'object', required: false, of: 'Link' },
+    },
+  },
+
   Experience: {
     name: 'Experience',
     kind: 'collection',
@@ -385,6 +444,13 @@ export function validateEntity(entity, schema, options = {}) {
     }
 
     if (rule.maxCurrentYear && value > new Date().getFullYear()) {
+      errors.push(`${label}.${field}: ${value} is in the future`);
+    }
+
+    // Same idea as maxCurrentYear, one field finer. `AAAA-MM-DD` sorts lexicographically, so this
+    // is a string comparison — no Date arithmetic, no timezone reasoning. A talk given today
+    // passes; one that has not happened yet cannot be evidenced by a photograph of it.
+    if (rule.maxToday && value > today()) {
       errors.push(`${label}.${field}: ${value} is in the future`);
     }
   }

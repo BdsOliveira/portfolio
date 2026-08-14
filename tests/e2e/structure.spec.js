@@ -51,6 +51,7 @@ test('sections use <h2> and their items use <h3>', async ({ page }) => {
  */
 const SECTION_ORDER = [
   'hero',
+  'talks',
   'about',
   'experience',
   'work',

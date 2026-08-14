@@ -311,6 +311,80 @@
   box-shadow: var(--shadow-lg);
 }
 
+/* Talks ------------------------------------------------------------------ */
+
+/*
+ * Same grid as .project-list, and for the reason stated at the top of this file: auto-fit with a
+ * min() floor rather than a fixed column count, so the row always fills and a single talk stretches
+ * to the column instead of sitting in half a page (FR-021).
+ *
+ * At the desktop breakpoint .section becomes two columns, so the body column this grid lives in is
+ * around 50rem rather than the full 72rem — which is what keeps a lone card's photograph a
+ * reasonable size rather than a full-bleed banner.
+ */
+.talk-list {
+  display: grid;
+  gap: var(--grid-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+/*
+ * `min-width: 0` is load-bearing, not tidiness. As a grid item this defaults to `min-width: auto`,
+ * which refuses to shrink below the longest unbreakable word — and the photograph's 1280px
+ * intrinsic width would otherwise become the card's minimum and push the page into horizontal
+ * scroll at 320px (FR-022). The overflow-wrap is the second half of the same fix, for a talk title
+ * longer than the whole card.
+ */
+.talk {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * A fixed frame, not the file's own proportions. `aspect-ratio` plus the width/height attributes
+ * the component sets reserves the box before the bytes land, so nothing below the card moves as
+ * photographs arrive (FR-033). `object-fit: cover` is what lets a portrait, square or 4:3 source
+ * fill that frame without being stretched (FR-019) — the owner drops in a photograph and never
+ * measures anything.
+ *
+ * `height: auto` overrides the intrinsic height attribute; the attribute pair still carries the
+ * ratio while the file loads.
+ */
+.talk__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-block-end: var(--space-2xs);
+}
+
+/* Date and event on one line: the two facts scanned for after the title, so splitting them would
+   give the card a second thin row saying almost nothing. */
+.talk__meta {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.talk__description {
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+/* Pinned to the bottom like .project-card__links, so cards of differing text length keep their
+   links on one line. The min-height is the touch target, not decoration (FR-029). */
+.talk__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  margin-block-start: auto;
+  padding-block-start: var(--space-2xs);
+}
+
 /* About ------------------------------------------------------------------ */
 
 .about {

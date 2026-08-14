@@ -15,6 +15,7 @@ reload the page, done — no markup to touch, no logic to change, nothing to reb
 
 | To change… | Edit | Notes |
 |------------|------|-------|
+| Talks (palestras) | `js/data/talks.js` | **Ships empty.** One entry plus one photograph — see "Adding a talk" below |
 | Selected Work (case studies) | `js/data/projects.js` | **Ships empty.** The section is absent until you add an entry — see "Adding a case study" below |
 | Skills | `js/data/skills.js` | Add a string to a group's `skills`, or add a group |
 | How I work | `js/data/philosophy.js` | Each principle must trace to something in `experiences.js` — see "Engineering Philosophy" below |
@@ -43,6 +44,47 @@ shows seniority → how do I reach you.
 
 Writing `endYear: null` for a course that finished but whose year you do not have would
 announce it as still in progress. Leave the field out instead.
+
+### Adding a talk
+
+`js/data/talks.js` ships **empty**, on purpose: no talk, date or description may be invented, and
+a photograph nobody has looked at cannot be described. The section is absent from the page until
+you add an entry.
+
+Adding one is two files — an entry, and a photograph:
+
+```js
+// js/data/talks.js
+{
+  id: 'observabilidade-antes-do-incidente',
+  title: 'Observabilidade antes do incidente',
+  date: '2025-03-12',
+  description: 'Uma ou duas frases sobre o que a palestra cobriu.',
+  photo: 'assets/images/talk-observabilidade-antes-do-incidente.webp',
+  photoAlt: 'O palestrante diante de um telão, apontando para um gráfico de latência',
+  event: 'PHP Piauí Meetup',                       // opcional
+  link: {                                          // opcional
+    label: 'Assistir à gravação de "Observabilidade antes do incidente"',
+    url: 'https://exemplo.com/gravacao',
+  },
+}
+```
+
+Worth knowing before you write one:
+
+- **`date` is `AAAA-MM-DD`, a real day, never in the future.** `2025-02-30` is rejected — it looks
+  well-formed and names a day that never existed.
+- **Array order does not matter.** This is the one section that sorts itself: newest first, from
+  the `date`. Append wherever it is convenient.
+- **The photograph is 1280×720 WebP**, in `assets/images/`, named after the `id`. It is shown in a
+  fixed 16:9 frame and cropped to fill, so any landscape source works and you never measure
+  anything. Use `npx @squoosh/cli` or any converter; keep it under a few hundred KB.
+- **`photoAlt` is required and must describe the photograph**, not repeat the title. It is what a
+  screen-reader user gets instead of the image.
+- **`link.label` must say where it goes on its own.** "Assistir à gravação de X" — never "clique
+  aqui", and never the bare title, because the title is already the heading above it.
+- **Committing the photograph without the entry fails the tests.** Every file under `assets/` must
+  be referenced by something the page ships.
 
 ### Adding a case study
 
