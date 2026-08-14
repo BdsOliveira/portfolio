@@ -477,5 +477,147 @@ export const educationDateCases = [
   },
 ];
 
+/*
+ * Talks ------------------------------------------------------------------
+ *
+ * The photograph paths below name files that are NOT in the repository, deliberately. Unit
+ * fixtures never touch the filesystem; the asset-existence check runs only against real
+ * js/data/ content, in tests/data/schemas.test.js.
+ */
+
+/**
+ * Authored OLDEST-FIRST on purpose. The component sorts most-recent-first (contract T4-2), so a
+ * fixture already in display order would pass whether or not the sort exists.
+ *
+ * Optional fields are spread across the three entries rather than piled onto one: neither, both,
+ * and each alone are all shapes the renderer has to handle.
+ */
+export const talks = [
+  {
+    id: 'fixture-talk-oldest',
+    title: 'Fixture Talk Oldest',
+    date: '2023-06-04',
+    description: 'The oldest fixture talk, authored first so the sort has something to do.',
+    photo: 'assets/images/talk-fixture-talk-oldest.webp',
+    photoAlt: 'Fixture photograph of the oldest talk',
+  },
+  {
+    id: 'fixture-talk-middle',
+    title: 'Fixture Talk Middle',
+    date: '2024-11-20',
+    description: 'The middle fixture talk, carrying an event name but no link.',
+    photo: 'assets/images/talk-fixture-talk-middle.webp',
+    photoAlt: 'Fixture photograph of the middle talk',
+    event: 'Fixture Conference',
+  },
+  {
+    id: 'fixture-talk-newest',
+    title: 'Fixture Talk Newest',
+    date: '2025-03-12',
+    description: 'The newest fixture talk, carrying every optional field.',
+    photo: 'assets/images/talk-fixture-talk-newest.webp',
+    photoAlt: 'Fixture photograph of the newest talk',
+    event: 'Fixture Meetup',
+    link: {
+      label: 'Assistir à gravação de Fixture Talk Newest',
+      url: 'https://example.com/talks/fixture-talk-newest',
+    },
+  },
+];
+
+/** Required fields only — no event, no link, and therefore no element for either (T4-7). */
+export const talkMinimal = [
+  {
+    id: 'fixture-talk-minimal',
+    title: 'Fixture Talk Minimal',
+    date: '2024-01-15',
+    description: 'Carries only the required fields.',
+    photo: 'assets/images/talk-fixture-talk-minimal.webp',
+    photoAlt: 'Fixture photograph of the minimal talk',
+  },
+];
+
+export const talkWithEvent = [{ ...talkMinimal[0], id: 'fixture-talk-event', event: 'Fixture Summit' }];
+
+export const talkWithLink = [
+  {
+    ...talkMinimal[0],
+    id: 'fixture-talk-link',
+    link: {
+      label: 'Ver os slides de Fixture Talk Minimal',
+      url: 'https://example.com/talks/fixture-slides',
+    },
+  },
+];
+
+/** Two talks on one day: the sort must be stable, leaving their relative order alone (T4-2). */
+export const talksSameDate = [
+  { ...talkMinimal[0], id: 'fixture-talk-same-first', title: 'Fixture Same Day First' },
+  { ...talkMinimal[0], id: 'fixture-talk-same-second', title: 'Fixture Same Day Second' },
+];
+
+export const TALK_REQUIRED_FIELDS = ['id', 'title', 'date', 'description', 'photo', 'photoAlt'];
+
+/**
+ * The full entry with exactly one required field removed, once per field (T4-5).
+ *
+ * Generated rather than hand-written for the same reason projectWithoutField is: a field added to
+ * the schema cannot be quietly left untested — add it to TALK_REQUIRED_FIELDS and the sweep
+ * covers it.
+ */
+export const talkWithoutField = (field) => {
+  const entry = { ...talks[2] };
+  delete entry[field];
+  return [entry];
+};
+
+/**
+ * Identical field *presence* to `talks`, entirely different field *values*.
+ *
+ * Renders to the same DOM shape or the component is reading its content rather than its schema
+ * (contract T4-13, tests/data/independence.test.js).
+ */
+export const talksDifferentValues = [
+  {
+    id: 'fixture-other-oldest',
+    title: 'Completely Different Title',
+    date: '2019-02-28',
+    description: 'Different words entirely, same shape.',
+    photo: 'assets/images/talk-fixture-other-oldest.webp',
+    photoAlt: 'A different fixture photograph',
+  },
+  {
+    id: 'fixture-other-middle',
+    title: 'Another Unrelated Title',
+    date: '2020-08-09',
+    description: 'Also different.',
+    photo: 'assets/images/talk-fixture-other-middle.webp',
+    photoAlt: 'Another different fixture photograph',
+    event: 'Unrelated Event',
+  },
+  {
+    id: 'fixture-other-newest',
+    title: 'A Third Unrelated Title',
+    date: '2021-12-31',
+    description: 'Different again.',
+    photo: 'assets/images/talk-fixture-other-newest.webp',
+    photoAlt: 'A third different fixture photograph',
+    event: 'Another Unrelated Event',
+    link: {
+      label: 'Ver a gravação de A Third Unrelated Title',
+      url: 'https://example.com/talks/other',
+    },
+  },
+];
+
+/** Schema-level rejections (contracts D4-2, D4-3). Never rendered. */
+export const talkFutureDate = [
+  { ...talkMinimal[0], id: 'fixture-talk-future', date: `${new Date().getFullYear() + 1}-01-01` },
+];
+
+export const talkImpossibleDate = [
+  { ...talkMinimal[0], id: 'fixture-talk-impossible', date: '2025-02-30' },
+];
+
 /** The empty-collection path, exercised by every collection component (research R8). */
 export const emptyCollection = [];
