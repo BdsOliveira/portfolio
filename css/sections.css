@@ -473,14 +473,18 @@
 /* Certifications --------------------------------------------------------- */
 
 /*
- * The `max-width: var(--measure)` that used to be here made a two-entry list occupy a narrow
- * strip on the left of an otherwise empty section. These are cards, not prose: they take the
- * same auto-fit treatment as every other collection, so two entries become two equal columns.
+ * One entry per row, matching `.timeline` in Experience and Education rather than the auto-fit
+ * columns this list used to take. Side-by-side columns halved the width available to a card,
+ * which was harmless while every entry was two lines of text and is not now that one carries a
+ * photograph: at half width the evidence is too small to read anything in.
+ *
+ * The `max-width: var(--measure)` this list carried before the columns is deliberately still
+ * absent — 68ch is a measure for prose, and it made a two-entry list sit as a narrow strip in
+ * an otherwise empty section.
  */
 .certification-list {
   display: grid;
   gap: var(--grid-gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 }
 
 .certification {
@@ -528,14 +532,19 @@
 }
 
 /*
- * The evidence photo sits below the claim, at the body's full width — the card is a single
- * narrow column, so beside the text there is no width left for a photograph to be readable at.
+ * The evidence photo sits below the claim rather than beside it: the badge already anchors the
+ * left of the card, and a second column there would leave the photograph too narrow to read.
+ *
  * `height: auto` overrides the intrinsic `height` attribute; the attribute pair still reserves
- * the aspect ratio while the file loads, so nothing below it jumps (C-8).
+ * the aspect ratio while the file loads, so nothing below it jumps (C-8). The cap keeps the
+ * photo from spanning the full row on a wide screen, where it would outweigh the claim it is
+ * only meant to support — and stops it being scaled past its own 1000px, which buys no detail
+ * and only softens the image.
  */
 .certification__evidence {
   display: block;
   width: 100%;
+  max-width: 32rem;
   height: auto;
   margin-block-start: var(--space-xs);
   border-radius: var(--radius-md);
