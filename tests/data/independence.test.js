@@ -21,6 +21,8 @@ import { renderSkills } from '../../js/components/skills.js';
 import { renderCertifications } from '../../js/components/certifications.js';
 import { renderExperience } from '../../js/components/experience.js';
 import { renderEducation } from '../../js/components/education.js';
+import { renderPhilosophy } from '../../js/components/philosophy.js';
+import { renderCommunity } from '../../js/components/community.js';
 
 import * as fixtures from '../fixtures/index.js';
 
@@ -65,6 +67,8 @@ const COMPONENTS = [
   ['certifications', renderCertifications, fixtures.certifications],
   ['experience', renderExperience, fixtures.experiences],
   ['education', renderEducation, fixtures.education],
+  ['philosophy', renderPhilosophy, fixtures.principles],
+  ['community', renderCommunity, fixtures.community],
 ];
 
 describe('tests bind to contracts, not to content values', () => {

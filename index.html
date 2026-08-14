@@ -23,6 +23,34 @@
     <meta name="twitter:description" content="Portfólio de Bruno Oliveira, Software Engineer: experiência profissional, habilidades técnicas, formação e certificações.">
     <meta name="twitter:image" content="https://portfolio-bdsoliveira.vercel.app/assets/images/og-card.png">
 
+    <!--
+      Structured data describing the owner as a person (FR-068).
+
+      Static, not injected: crawlers that never execute a script are precisely the audience for
+      it (research R9). Every value here already appears on the page, so it adds no new claim —
+      and like every other mirror it is asserted field-by-field against js/data/profile.js by
+      tests/data/sync.test.js.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Bruno Oliveira",
+      "jobTitle": "Software Engineer",
+      "description": "Construo e modernizo sistemas em produção que precisam continuar funcionando enquanto mudam.",
+      "email": "bds.commus@gmail.com",
+      "url": "https://portfolio-bdsoliveira.vercel.app/",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Parnaíba, PI – Brasil"
+      },
+      "sameAs": [
+        "https://github.com/BdsOliveira",
+        "https://www.linkedin.com/in/bruno-oliveira/"
+      ]
+    }
+    </script>
+
     <!-- Body weight only: preloading both would compete with the text it is meant to speed up. -->
     <link rel="preload" href="assets/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -66,14 +94,35 @@
     </svg>
 
     <header class="site-header">
+        <!--
+          Real crawlable anchors, never script-only navigation (FR-008).
+
+          Items bound to a data-driven section ship `hidden`, exactly like the section itself;
+          js/components/navigation.js reveals one only when its target actually rendered, so a
+          link never points at a section that is not there (FR-004, research R2). Início, Sobre
+          and Contato are never hidden — their sections are static.
+
+          The toggle also ships `hidden` and is revealed BY the script. With no script the full
+          list is simply visible and operable: the collapsed navigation is the enhancement, and
+          the complete list is the fallback.
+        -->
         <nav class="site-nav" aria-label="Navegação principal">
             <a class="site-nav__brand" href="#hero">Bruno Oliveira</a>
-            <ul class="site-nav__list">
-                <li><a href="#hero">Home</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#projects">Projetos</a></li>
-                <li><a href="#certifications">Certificações</a></li>
-                <li><a href="#contact">Contato</a></li>
+            <button class="site-nav__toggle" type="button" data-nav-toggle
+                    aria-controls="site-nav-list" aria-expanded="false" hidden>
+                Menu
+            </button>
+            <ul class="site-nav__list" id="site-nav-list">
+                <li data-nav-for="hero"><a href="#hero">Início</a></li>
+                <li data-nav-for="about"><a href="#about">Sobre</a></li>
+                <li data-nav-for="experience" hidden><a href="#experience">Experiência</a></li>
+                <li data-nav-for="work" hidden><a href="#work">Trabalhos</a></li>
+                <li data-nav-for="skills" hidden><a href="#skills">Skills</a></li>
+                <li data-nav-for="philosophy" hidden><a href="#philosophy">Como Trabalho</a></li>
+                <li data-nav-for="community" hidden><a href="#community">Comunidade</a></li>
+                <li data-nav-for="education" hidden><a href="#education">Formação</a></li>
+                <li data-nav-for="certifications" hidden><a href="#certifications">Certificações</a></li>
+                <li data-nav-for="contact"><a href="#contact">Contato</a></li>
             </ul>
         </nav>
     </header>
@@ -91,21 +140,31 @@
                     <span data-profile="role">Software Engineer</span>
                     com +<span id="years-of-experience">4</span> anos de experiência
                 </p>
+                <!-- The positioning statement (FR-011, FR-012). It comes before the summary
+                     because it is the claim; the summary is the evidence for it. -->
+                <p class="hero__headline" data-profile="headline">Construo e modernizo sistemas em produção que precisam continuar funcionando enquanto mudam.</p>
                 <p class="hero__summary" data-profile="summary">Especializado em PHP/Laravel, APIs REST e sistemas distribuídos, com foco em arquitetura de software e IA aplicada.</p>
-                <!-- An anchor, not a button: it navigates. The pre-migration control was a
-                     <button> with no behaviour at all (FR-028, contract C-10). -->
-                <a class="button hero__cta" href="#contact">Vamos conversar</a>
+                <!-- No availability statement: js/data/profile.js states no `availability`, by
+                     the owner's decision. The field is still optional-by-contract (FR-013), so
+                     restoring it means adding it back to profile.js and re-authoring a
+                     <p data-profile="availability" data-profile-optional="availability"> here. -->
+                <!-- Anchors, not buttons: they navigate. The pre-migration control was a
+                     <button> with no behaviour at all (FR-028, contract C-10).
+                     Both are omitted entirely if their destination leaves profile.js (FR-014). -->
+                <div class="hero__actions">
+                    <a class="button hero__cta" data-profile="primaryCta" href="#contact">Vamos conversar</a>
+                    <a class="button button--ghost" data-profile="secondaryCta" href="https://github.com/BdsOliveira" rel="noopener noreferrer" target="_blank">Ver projetos no GitHub</a>
+                </div>
+                <!-- GitHub is deliberately NOT in this list: the secondary call to action above
+                     already points at the same profile, and two GitHub anchors a few centimetres
+                     apart is the duplication FR-073 warns about. profile.socialLinks still
+                     carries it — it is a real profile of the owner, so it stays in the JSON-LD
+                     sameAs and in the contact routes. -->
                 <ul class="social-links" aria-label="Perfis profissionais">
-                    <li>
-                        <a class="social-links__link" href="https://github.com/BdsOliveira" rel="noopener noreferrer" target="_blank">
-                            <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-github"></use></svg>
-                            <span data-profile="social-label">Bruno Oliveira no GitHub</span>
-                        </a>
-                    </li>
                     <li>
                         <a class="social-links__link" href="https://www.linkedin.com/in/bruno-oliveira/" rel="noopener noreferrer" target="_blank">
                             <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-linkedin"></use></svg>
-                            <span data-profile="social-label">Bruno Oliveira no LinkedIn</span>
+                            <span data-profile="social-label">Ver no LinkedIn</span>
                         </a>
                     </li>
                 </ul>
@@ -120,29 +179,76 @@
             </div>
         </section>
 
-        <section id="skills" class="section" aria-labelledby="skills-heading">
-            <h2 id="skills-heading" class="section__heading">Habilidades Técnicas</h2>
-            <div class="section__body" data-mount="skills"></div>
+        <!--
+          About is static, like the Hero copy and for the same reason: FR-018 requires it to
+          survive a script failure, so rendering it would render it twice (research R7).
+          js/data/profile.js is the source of truth; sync.test.js fails on drift.
+        -->
+        <section id="about" class="section" aria-labelledby="about-heading">
+            <h2 id="about-heading" class="section__heading">Sobre</h2>
+            <div class="section__body about" data-profile="about">
+                <p class="about__paragraph">Sou engenheiro de software com mais de quatro anos construindo sistemas de backend que rodam em produção — plataformas de saúde, gestão acadêmica e infraestrutura para cargas de trabalho de IA. Trabalho principalmente com PHP/Laravel, NestJS e Next.js, projetando APIs REST e integrações entre serviços com RabbitMQ, WebSockets, Docker e bancos relacionais.</p>
+                <p class="about__paragraph">O que mais me interessa é o problema difícil por trás do código: modernizar sistemas legados sem parar a operação, tornar o comportamento de produção observável antes que ele vire incidente, e deixar a base de código melhor do que encontrei — via code review, mentoria e decisões de arquitetura defensáveis. Busco times que tratem qualidade de engenharia como requisito, não como fase final.</p>
+            </div>
         </section>
 
-        <section id="projects" class="section" aria-labelledby="projects-heading">
-            <h2 id="projects-heading" class="section__heading">Projetos Recentes</h2>
-            <div class="section__body" data-mount="projects"></div>
-        </section>
+        <!--
+          Every section below is data-driven and is authored `hidden` (research R1). js/app.js
+          reveals one only after its component has produced content, and removes it outright when
+          the collection is empty. That is what makes "an empty collection leaves no trace" true
+          for a visitor whose script never runs (FR-002, FR-003, FR-074).
 
-        <section id="certifications" class="section" aria-labelledby="certifications-heading">
-            <h2 id="certifications-heading" class="section__heading">Certificações</h2>
-            <div class="section__body" data-mount="certifications"></div>
-        </section>
-
-        <section id="experience" class="section" aria-labelledby="experience-heading">
+          Section order answers the recruiter's questions in the order they ask them (FR-001):
+          who are you → what have you done → what can you build → how do you think → what else
+          shows seniority → how do I reach you.
+        -->
+        <section id="experience" class="section" aria-labelledby="experience-heading" hidden>
             <h2 id="experience-heading" class="section__heading">Experiência</h2>
             <div class="section__body" data-mount="experience"></div>
         </section>
 
-        <section id="education" class="section" aria-labelledby="education-heading">
+        <!--
+          Selected Work. The id is `work`, naming the section as the recruiter and the navigation
+          see it; the module behind it is still js/data/projects.js, whose filename the
+          constitution mandates (research R6).
+
+          The collection ships EMPTY, so this section is absent from the rendered page entirely
+          until the owner supplies real case studies (FR-025, SC-003). That is the shipped state,
+          not a temporary one.
+        -->
+        <section id="work" class="section" aria-labelledby="work-heading" hidden>
+            <h2 id="work-heading" class="section__heading">Trabalhos Selecionados</h2>
+            <div class="section__body" data-mount="projects"></div>
+        </section>
+
+        <section id="skills" class="section" aria-labelledby="skills-heading" hidden>
+            <h2 id="skills-heading" class="section__heading">Habilidades Técnicas</h2>
+            <div class="section__body" data-mount="skills"></div>
+        </section>
+
+        <!-- Engineering Philosophy. Ships with real content authored from practices the
+             experience data already evidences (FR-031, research R14). -->
+        <section id="philosophy" class="section" aria-labelledby="philosophy-heading" hidden>
+            <h2 id="philosophy-heading" class="section__heading">Como Trabalho</h2>
+            <div class="section__body" data-mount="philosophy"></div>
+        </section>
+
+        <!-- Community. SHIPS EMPTY (FR-038): the owner has not supplied organisations or real
+             metrics, and no metric may be estimated or invented (FR-037). The section is absent
+             from the page entirely until real content lands. -->
+        <section id="community" class="section" aria-labelledby="community-heading" hidden>
+            <h2 id="community-heading" class="section__heading">Comunidade</h2>
+            <div class="section__body" data-mount="community"></div>
+        </section>
+
+        <section id="education" class="section" aria-labelledby="education-heading" hidden>
             <h2 id="education-heading" class="section__heading">Formação</h2>
             <div class="section__body" data-mount="education"></div>
+        </section>
+
+        <section id="certifications" class="section" aria-labelledby="certifications-heading" hidden>
+            <h2 id="certifications-heading" class="section__heading">Certificações</h2>
+            <div class="section__body" data-mount="certifications"></div>
         </section>
 
         <section id="contact" class="section" aria-labelledby="contact-heading">
@@ -155,6 +261,13 @@
               The email anchor's visible text IS the address, which gives it a descriptive
               accessible name without a separate label.
             -->
+            <!--
+              Wrapped in .section__body like every other section, so the two-column layout at
+              the desktop breakpoint (sections.css) has exactly one content column to place.
+              Without it, each of the four blocks below would be laid out as a separate grid
+              item and the heading column would only align with the first of them.
+            -->
+            <div class="section__body">
             <ul class="contact-details">
                 <li class="contact-details__item">
                     <span class="contact-details__label">Localização</span>
@@ -165,36 +278,54 @@
                     <a class="inline-link" href="mailto:bds.commus@gmail.com" data-profile="email">bds.commus@gmail.com</a>
                 </li>
             </ul>
-            <!-- Every field has a persistent <label>. Placeholders are supplementary and are
-                 never the only identifier (FR-027, contract P-6). -->
-            <form class="contact-form">
-                <div class="field">
-                    <label class="field__label" for="contact-name">Nome</label>
-                    <input class="field__control" id="contact-name" name="name" type="text"
-                           autocomplete="name" placeholder="Como devo chamar você" required>
-                </div>
-                <div class="field">
-                    <label class="field__label" for="contact-email">Email</label>
-                    <input class="field__control" id="contact-email" name="email" type="email"
-                           autocomplete="email" placeholder="voce@exemplo.com" required>
-                </div>
-                <div class="field">
-                    <label class="field__label" for="contact-message">Mensagem</label>
-                    <textarea class="field__control" id="contact-message" name="message" rows="5"
-                              placeholder="Sobre o que gostaria de conversar?" required></textarea>
-                </div>
-                <button class="button button--block" type="submit">Enviar Mensagem</button>
-                <p class="contact-form__note">
-                    Prefere outro caminho? Fale comigo pelo
-                    <a class="inline-link" href="https://www.linkedin.com/in/bruno-oliveira/"
-                       rel="noopener noreferrer" target="_blank">LinkedIn</a>.
-                </p>
-            </form>
+
+            <!--
+              Contact routes (FR-040). LinkedIn and GitHub as distinct paths, each named so it
+              identifies its destination on its own (FR-059) — never "clique aqui".
+
+              There is no email BUTTON here by the owner's decision, but email is still a route:
+              the address above is a live mailto anchor whose visible text is the address itself,
+              so primary contact survives with no script and no form (constitution IV).
+
+              There is NO CV route authored here, because js/data/profile.js states no `cvUrl`.
+              A route whose destination is absent is omitted entirely, not rendered inert
+              (FR-041). When the owner supplies a CV link, add an <a> carrying
+              data-profile-optional="cvUrl" here and js/components/identity.js takes care of the
+              rest.
+
+              LinkedIn appears both here and in the Hero's social list. That duplication is
+              deliberate — identity in one place, conversion in the other — and the checks that
+              used to assume uniqueness were rewritten rather than worked around (FR-073).
+            -->
+            <ul class="contact-routes" aria-label="Formas de contato">
+                <!-- LinkedIn carries the primary fill now that it leads the list: a row of
+                     ghost-only buttons states no preference between the routes. -->
+                <li>
+                    <a class="button" href="https://www.linkedin.com/in/bruno-oliveira/"
+                       rel="noopener noreferrer" target="_blank">
+                        <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-linkedin"></use></svg>
+                        Conversar no LinkedIn
+                    </a>
+                </li>
+                <li>
+                    <a class="button button--ghost" href="https://github.com/BdsOliveira"
+                       rel="noopener noreferrer" target="_blank">
+                        <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-github"></use></svg>
+                        Ver código no GitHub
+                    </a>
+                </li>
+            </ul>
+            <!-- There is no contact form, by the owner's decision: there is no backend to submit
+                 to, and every route above works without JavaScript (constitution IV). -->
+            </div>
         </section>
     </main>
 
     <footer class="site-footer">
-        <p class="site-footer__copyright">&copy; 2024 Bruno Oliveira. Todos os direitos reservados.</p>
+        <!-- The year is derived at load, like the years-of-experience figure above it. The
+             literal here is a no-script fallback that can drift by at most one year, not a
+             second source of truth (FR-072, research R4). -->
+        <p class="site-footer__copyright">&copy; <span id="copyright-year">2026</span> Bruno Oliveira. Todos os direitos reservados.</p>
     </footer>
 
     <script type="module" src="js/app.js"></script>

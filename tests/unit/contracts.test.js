@@ -14,6 +14,9 @@ import { renderSkills } from '../../js/components/skills.js';
 import { renderCertifications } from '../../js/components/certifications.js';
 import { renderExperience } from '../../js/components/experience.js';
 import { renderEducation } from '../../js/components/education.js';
+import { renderPhilosophy } from '../../js/components/philosophy.js';
+import { renderCommunity } from '../../js/components/community.js';
+import { renderCopyrightYear } from '../../js/components/identity.js';
 
 import { createDocument, mountFragment, REPO_ROOT } from './_setup.js';
 import * as fixtures from '../fixtures/index.js';
@@ -45,9 +48,52 @@ const COMPONENTS = [
     data: fixtures.education,
     collection: true,
   },
+  {
+    name: 'philosophy',
+    file: 'philosophy.js',
+    render: renderPhilosophy,
+    data: fixtures.principles,
+    collection: true,
+  },
+  {
+    name: 'community',
+    file: 'community.js',
+    render: renderCommunity,
+    data: fixtures.community,
+    collection: true,
+  },
+  {
+    // Not a section: it derives the footer year. Its other export, pruneOptionalIdentity,
+    // removes nodes rather than producing them and is covered by tests/unit/identity.test.js.
+    name: 'identity',
+    file: 'identity.js',
+    render: renderCopyrightYear,
+    data: fixtures.profile,
+    collection: false,
+  },
 ];
 
-const sourceOf = (file) => readFileSync(`${REPO_ROOT}js/components/${file}`, 'utf8');
+/**
+ * Modules under js/components/ that carry no renderer at all, and so cannot be held to the
+ * universal render contracts.
+ *
+ * Enumerated rather than pattern-matched: the point of the coverage check below is that a new
+ * component cannot appear without someone deciding which list it belongs in. See the plan's
+ * Complexity Tracking entry for why interaction behaviour lives in this directory.
+ */
+const BEHAVIOUR_MODULES = ['helpers.js', 'navigation.js'];
+
+/**
+ * Comments are prose *about* the code, not code. A module's header explaining that it renders
+ * the "Como Trabalho" section is documentation; flagging it as hardcoded content would push
+ * every component towards being undocumented, which is the opposite of what C-3 is for.
+ *
+ * tests/data/schemas.test.js strips comments for the same reason.
+ */
+const stripComments = (source) =>
+  source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+
+const sourceOf = (file) => stripComments(readFileSync(`${REPO_ROOT}js/components/${file}`, 'utf8'));
 
 function deepFreeze(value) {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {
@@ -58,9 +104,9 @@ function deepFreeze(value) {
 }
 
 describe('universal component contracts', () => {
-  test('every component module is covered by this table', () => {
+  test('every component module is covered by this table or declared behaviour-only', () => {
     const modules = readdirSync(`${REPO_ROOT}js/components`)
-      .filter((file) => file.endsWith('.js') && file !== 'helpers.js')
+      .filter((file) => file.endsWith('.js') && !BEHAVIOUR_MODULES.includes(file))
       .sort();
 
     assert.deepEqual(modules, COMPONENTS.map((component) => component.file).sort());
@@ -196,8 +242,10 @@ function literalContentValues() {
     else if (value && typeof value === 'object') Object.values(value).forEach(walk);
   };
 
-  for (const file of ['profile.js', 'projects.js', 'skills.js', 'certifications.js']) {
-    const source = readFileSync(`${REPO_ROOT}js/data/${file}`, 'utf8');
+  // js/data/projects.js is no longer read: it ships empty, and its authoring instructions are
+  // comments full of example values that are not content (FR-025).
+  for (const file of ['profile.js', 'skills.js', 'certifications.js', 'philosophy.js']) {
+    const source = stripComments(readFileSync(`${REPO_ROOT}js/data/${file}`, 'utf8'));
     for (const match of source.matchAll(/'([^'\n]{3,})'|"([^"\n]{3,})"/g)) {
       const literal = match[1] ?? match[2];
       // Skip paths and URLs — a component may legitimately mention neither, but a false

@@ -45,37 +45,60 @@
      indicator needs, so the ring can carry colour instead of falling back to plain text. */
   --color-focus: var(--color-accent);
 
-  /* Spacing scale */
+  /*
+   * SPACING SCALE
+   *
+   * The small steps (3xs–lg) are fixed: they space things that are *inside* a component —
+   * a label from its value, an icon from its text — and those relationships do not change
+   * meaning as the viewport grows, so scaling them only makes small screens cramped.
+   *
+   * The three large steps are fluid, because they space things *between* components, and
+   * that is exactly the rhythm a wide screen has room for and a phone does not. Fluid here
+   * rather than stepped at a breakpoint: a 900px window should not get the phone's rhythm
+   * merely because it sits below the desktop breakpoint.
+   *
+   *   --space-xl    40px → 56px
+   *   --space-2xl   56px → 96px    section padding-block
+   *   --space-3xl   80px → 144px   hero, footer separation
+   */
   --space-3xs: 0.25rem;
   --space-2xs: 0.5rem;
   --space-xs: 0.75rem;
   --space-sm: 1rem;
   --space-md: 1.5rem;
   --space-lg: 2rem;
-  --space-xl: 3rem;
-  --space-2xl: 4rem;
-  --space-3xl: 6rem;
+  --space-xl: clamp(2.5rem, 2rem + 2.2vw, 3.5rem);
+  --space-2xl: clamp(3.5rem, 2.6rem + 4.4vw, 6rem);
+  --space-3xl: clamp(5rem, 3.4rem + 7.5vw, 9rem);
 
   /* Type scale */
   --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-weight-regular: 400;
   --font-weight-semibold: 600;
 
+  /*
+   * --text-xs and --text-sm stay fixed: they are already at the floor of what is readable,
+   * and fluid type that scales *down* from 14px on a phone is how supporting copy becomes
+   * unreadable. Everything from --text-base up scales, so body copy reaches 18px on a wide
+   * screen — the single change that most separates a spacious layout from a stretched one.
+   */
   --text-xs: 0.8125rem;
   --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.375rem;
-  --text-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
-  --text-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+  --text-base: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
+  --text-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --text-2xl: clamp(1.625rem, 1.35rem + 1.4vw, 2.25rem);
+  --text-3xl: clamp(2.25rem, 1.6rem + 3.2vw, 3.5rem);
 
   --leading-tight: 1.2;
   --leading-normal: 1.6;
+  /* Long-form prose only. Generous leading is most of what makes a page read as unhurried. */
+  --leading-relaxed: 1.75;
 
   /* Shape */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
   --radius-pill: 999rem;
   --border-width: 1px;
   --focus-ring-width: 3px;
@@ -84,11 +107,49 @@
   /* Elevation. Kept here so no shadow colour is authored elsewhere (S-1). */
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
   --shadow-md: 0 8px 24px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 24px 48px rgb(0 0 0 / 0.45);
 
-  /* Layout */
+  /*
+   * LAYOUT
+   *
+   * --gutter and --grid-gap are fluid for the same reason as the large spacing steps, and
+   * being fluid is what let the tablet breakpoint's `--gutter` override go away: one
+   * expression covers 320px to 1440px without a step.
+   *
+   * --section-label is the width of the heading column in the two-column section layout
+   * (sections.css). It is sized so the remaining body column lands near --measure at
+   * 1024px — that is the whole point of the layout: the prose column stops being a narrow
+   * strip with an empty half-page beside it.
+   *
+   * --header-height is a stated estimate, not a measurement: the sticky header sizes itself
+   * from its contents. It exists so scroll-padding and the sticky section heading share one
+   * number instead of two guesses that drift apart.
+   */
   --content-max: 72rem;
-  --measure: 65ch;
-  --gutter: var(--space-md);
+  --measure: 68ch;
+  --gutter: clamp(1.25rem, 0.85rem + 1.9vw, 2.5rem);
+  --grid-gap: clamp(1.25rem, 0.95rem + 1.3vw, 2rem);
+  --card-padding: clamp(1.25rem, 0.9rem + 1.6vw, 2.25rem);
+  --section-label: 15rem;
+  --header-height: 4rem;
+  --touch-target: 2.75rem;
+
+  /*
+   * Two clearances under the sticky header, because the header is not one height.
+   *
+   * Measured: it is 65px at every width EXCEPT roughly 768px–1000px, where the ten
+   * navigation destinations no longer fit beside the brand and the row wraps, taking it
+   * to 113px.
+   *
+   * --sticky-offset positions the sticky section heading, which only exists at 64rem and
+   * above — where the header is reliably one row — so it only has to clear 65px.
+   *
+   * --anchor-offset is scroll-padding-top, and a hash link can be followed at ANY width,
+   * so it has to clear the two-row case as well. Sized against the 113px header, which is
+   * why it is the larger of the two.
+   */
+  --sticky-offset: calc(var(--header-height) + var(--space-xl));
+  --anchor-offset: calc(var(--header-height) + var(--space-2xl));
 
   /* Motion */
   --transition-fast: 150ms ease;

@@ -51,6 +51,10 @@ function card(entry, doc) {
             },
           })
         : null,
+      // Last in the body, after the claim it supports: the title and detail state what was won,
+      // the photo shows it. Placing it beside the title instead would put a second visual anchor
+      // opposite the badge and squeeze the image to a width where nothing in it is legible.
+      evidence(entry, doc),
     ],
   });
 
@@ -62,5 +66,32 @@ function card(entry, doc) {
       el(doc, 'span', { className: 'certification__badge', children: [icon(doc, entry.icon)] }),
       body,
     ],
+  });
+}
+
+/**
+ * The evidence image, shown inline rather than linked. Unlike the decorative badge this one
+ * carries meaning, so it takes a real `alt` from the data (contract C-9 draws that line).
+ *
+ * `width`/`height` are the intrinsic pixel size; CSS overrides the rendered size and keeps the
+ * ratio. They are here to reserve the box before the bytes land (contract C-8) — without them
+ * every card below this one jumps when the photo decodes. `loading="lazy"` because the section
+ * sits well below the fold.
+ */
+function evidence(entry, doc) {
+  if (!entry.evidence) return null;
+  const { src, alt, width, height } = entry.evidence;
+
+  return el(doc, 'img', {
+    className: 'certification__evidence',
+    attrs: {
+      src,
+      alt,
+      width: String(width),
+      height: String(height),
+      loading: 'lazy',
+      decoding: 'async',
+      'data-evidence': '',
+    },
   });
 }

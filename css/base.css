@@ -64,15 +64,42 @@
   margin: 0;
 }
 
+/*
+ * The `hidden` attribute is load-bearing in this project, not a convenience.
+ *
+ * Every data-driven section and every navigation item bound to one ships `hidden`, and js/app.js
+ * reveals it only once its component has produced content (research R1). That is what makes
+ * "an empty collection leaves no trace" true for a visitor whose script never runs (FR-003,
+ * FR-074).
+ *
+ * The UA stylesheet already does this — but any author `display` declaration on one of those
+ * elements would silently override it, breaking the guarantee for exactly the visitors who
+ * cannot report it. Pinned here so that cannot happen by accident.
+ */
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
-  /* The fixed header must not cover the section a hash link jumps to. */
-  scroll-padding-top: var(--space-3xl);
+  /*
+   * The sticky header must not cover the section a hash link jumps to. Shares one token with
+   * the sticky section heading (sections.css) rather than carrying a second guess at the
+   * header's height that would drift away from the first.
+   */
+  scroll-padding-top: var(--anchor-offset);
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   min-height: 100vh;
+  /*
+   * A single word longer than its container is the standard cause of horizontal page scroll, and
+   * portfolio content is full of candidates: URLs, package names, "Specification-Driven
+   * Development". Set once here rather than per-component, so a section added later inherits the
+   * guarantee instead of re-discovering the defect (FR-065, SC-011).
+   */
+  overflow-wrap: break-word;
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
@@ -120,16 +147,24 @@ h4 {
   text-wrap: balance;
 }
 
+/*
+ * Optical tightening. Poppins is a geometric sans, and at display sizes its default tracking
+ * reads loose — the larger the size, the more negative tracking it wants. Applied by step, not
+ * globally: body copy at 16px needs the default and is harmed by tightening (P-6, letter-spacing).
+ */
 h1 {
   font-size: var(--text-3xl);
+  letter-spacing: -0.025em;
 }
 
 h2 {
   font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
 }
 
 h3 {
   font-size: var(--text-xl);
+  letter-spacing: -0.01em;
 }
 
 p {
