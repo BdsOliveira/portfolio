@@ -1,0 +1,20 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static data-driven portfolio. Zero runtime dependencies.",
+  "license": "MIT",
+  "scripts": {
+    "test:unit": "node --test \"tests/unit/**/*.test.js\"",
+    "test:data": "node --test \"tests/data/**/*.test.js\"",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:data && npm run test:e2e",
+    "serve": "node tests/static-server.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.50.0",
+    "linkedom": "^0.18.9"
+  }
+}

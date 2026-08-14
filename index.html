@@ -1,196 +1,333 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bruno Oliveira - Fullstack Developer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Bruno Oliveira — Software Engineer</title>
+    <meta name="description" content="Portfólio de Bruno Oliveira, Software Engineer com mais de 4 anos de experiência em PHP/Laravel, NestJS, Next.js, APIs REST e sistemas distribuídos.">
+    <link rel="canonical" href="https://portfolio-bdsoliveira.vercel.app/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bruno Oliveira">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:url" content="https://portfolio-bdsoliveira.vercel.app/">
+    <meta property="og:title" content="Bruno Oliveira — Software Engineer">
+    <meta property="og:description" content="Portfólio de Bruno Oliveira, Software Engineer: experiência profissional, habilidades técnicas, formação e certificações.">
+    <meta property="og:image" content="https://portfolio-bdsoliveira.vercel.app/assets/images/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Bruno Oliveira, Software Engineer">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bruno Oliveira — Software Engineer">
+    <meta name="twitter:description" content="Portfólio de Bruno Oliveira, Software Engineer: experiência profissional, habilidades técnicas, formação e certificações.">
+    <meta name="twitter:image" content="https://portfolio-bdsoliveira.vercel.app/assets/images/og-card.png">
+
+    <!--
+      Structured data describing the owner as a person (FR-068).
+
+      Static, not injected: crawlers that never execute a script are precisely the audience for
+      it (research R9). Every value here already appears on the page, so it adds no new claim —
+      and like every other mirror it is asserted field-by-field against js/data/profile.js by
+      tests/data/sync.test.js.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Bruno Oliveira",
+      "jobTitle": "Software Engineer",
+      "description": "Construo e modernizo sistemas em produção que precisam continuar funcionando enquanto mudam.",
+      "email": "bds.commus@gmail.com",
+      "url": "https://portfolio-bdsoliveira.vercel.app/",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Parnaíba, PI – Brasil"
+      },
+      "sameAs": [
+        "https://github.com/BdsOliveira",
+        "https://www.linkedin.com/in/bruno-oliveira/"
+      ]
+    }
+    </script>
+
+    <!-- Body weight only: preloading both would compete with the text it is meant to speed up. -->
+    <link rel="preload" href="assets/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sections.css">
 </head>
-<body class="bg-gray-900 text-gray-100 font-['Inter']">
-    <!-- Navigation -->
-    <nav class="fixed w-full bg-gray-800 shadow-lg z-50">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <span class="text-2xl font-bold text-blue-400">Bruno Oliveira</span>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="hover:text-blue-400 transition">Home</a>
-                    <a href="#skills" class="hover:text-blue-400 transition">Skills</a>
-                    <a href="#projects" class="hover:text-blue-400 transition">Projetos</a>
-                    <a href="#certs" class="hover:text-blue-400 transition">Certificações</a>
-                    <a href="#contact" class="hover:text-blue-400 transition">Contato</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body>
+    <!--
+      Icon sprite, inlined so icons cost zero extra requests (research R5).
+      Source SVGs live in assets/icons/ and are the editable originals.
+    -->
+    <svg aria-hidden="true" style="display:none" xmlns="http://www.w3.org/2000/svg">
+        <symbol id="icon-github" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </symbol>
+        <symbol id="icon-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <path d="M15 3h6v6"/>
+            <path d="M10 14 21 3"/>
+        </symbol>
+        <symbol id="icon-project" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+        </symbol>
+        <symbol id="icon-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+            <path d="M4 22h16"/>
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+        </symbol>
+        <symbol id="icon-certificate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="6"/>
+            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+        </symbol>
+    </svg>
 
-    <!-- Hero Section -->
-    <section id="home" class="pt-32 pb-20 px-6">
-        <div class="container mx-auto md:flex items-center">
-            <div class="md:w-1/2 pr-3">
-                <h1 class="text-5xl font-bold mb-6">Bruno Oliveira</h1>
-                <p class="text-xl text-gray-400 mb-8">
-                    Desenvolvedor Fullstack com +<span id="anos"></span> anos de experiência criando soluções robustas e escaláveis.
+    <header class="site-header">
+        <!--
+          Real crawlable anchors, never script-only navigation (FR-008).
+
+          Items bound to a data-driven section ship `hidden`, exactly like the section itself;
+          js/components/navigation.js reveals one only when its target actually rendered, so a
+          link never points at a section that is not there (FR-004, research R2). Início, Sobre
+          and Contato are never hidden — their sections are static.
+
+          The toggle also ships `hidden` and is revealed BY the script. With no script the full
+          list is simply visible and operable: the collapsed navigation is the enhancement, and
+          the complete list is the fallback.
+        -->
+        <nav class="site-nav" aria-label="Navegação principal">
+            <a class="site-nav__brand" href="#hero">Bruno Oliveira</a>
+            <button class="site-nav__toggle" type="button" data-nav-toggle
+                    aria-controls="site-nav-list" aria-expanded="false" hidden>
+                Menu
+            </button>
+            <ul class="site-nav__list" id="site-nav-list">
+                <li data-nav-for="hero"><a href="#hero">Início</a></li>
+                <li data-nav-for="about"><a href="#about">Sobre</a></li>
+                <li data-nav-for="experience" hidden><a href="#experience">Experiência</a></li>
+                <li data-nav-for="work" hidden><a href="#work">Trabalhos</a></li>
+                <li data-nav-for="skills" hidden><a href="#skills">Skills</a></li>
+                <li data-nav-for="philosophy" hidden><a href="#philosophy">Como Trabalho</a></li>
+                <li data-nav-for="community" hidden><a href="#community">Comunidade</a></li>
+                <li data-nav-for="education" hidden><a href="#education">Formação</a></li>
+                <li data-nav-for="certifications" hidden><a href="#certifications">Certificações</a></li>
+                <li data-nav-for="contact"><a href="#contact">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!--
+          Static critical content (research R2): name, role, summary and social links are authored
+          here and NEVER rendered by JavaScript. js/data/profile.js is the source of truth and
+          tests/data/sync.test.js fails if these strings drift from it.
+        -->
+        <section id="hero" class="hero">
+            <div class="hero__intro">
+                <h1 class="hero__name" data-profile="name">Bruno Oliveira</h1>
+                <p class="hero__lede">
+                    <span data-profile="role">Software Engineer</span>
+                    com +<span id="years-of-experience">4</span> anos de experiência
                 </p>
-                <button class="bg-blue-500 hover:bg-blue-600 px-8 py-3 rounded-lg font-medium transition">
-                    Vamos conversar
-                </button>
-            </div>
-            <div class="md:w-1/2 mt-12 md:mt-0">
-                <div class="bg-gray-800 h-80 rounded-2xl flex items-center justify-center">
-                    <span class="text-gray-400">Imagem de perfil/Ilustração</span>
+                <!-- The positioning statement (FR-011, FR-012). It comes before the summary
+                     because it is the claim; the summary is the evidence for it. -->
+                <p class="hero__headline" data-profile="headline">Construo e modernizo sistemas em produção que precisam continuar funcionando enquanto mudam.</p>
+                <p class="hero__summary" data-profile="summary">Especializado em PHP/Laravel, APIs REST e sistemas distribuídos, com foco em arquitetura de software e IA aplicada.</p>
+                <!-- No availability statement: js/data/profile.js states no `availability`, by
+                     the owner's decision. The field is still optional-by-contract (FR-013), so
+                     restoring it means adding it back to profile.js and re-authoring a
+                     <p data-profile="availability" data-profile-optional="availability"> here. -->
+                <!-- Anchors, not buttons: they navigate. The pre-migration control was a
+                     <button> with no behaviour at all (FR-028, contract C-10).
+                     Both are omitted entirely if their destination leaves profile.js (FR-014). -->
+                <div class="hero__actions">
+                    <a class="button hero__cta" data-profile="primaryCta" href="#contact">Vamos conversar</a>
+                    <a class="button button--ghost" data-profile="secondaryCta" href="https://github.com/BdsOliveira" rel="noopener noreferrer" target="_blank">Ver projetos no GitHub</a>
                 </div>
+                <!-- GitHub is deliberately NOT in this list: the secondary call to action above
+                     already points at the same profile, and two GitHub anchors a few centimetres
+                     apart is the duplication FR-073 warns about. profile.socialLinks still
+                     carries it — it is a real profile of the owner, so it stays in the JSON-LD
+                     sameAs and in the contact routes. -->
+                <ul class="social-links" aria-label="Perfis profissionais">
+                    <li>
+                        <a class="social-links__link" href="https://www.linkedin.com/in/bruno-oliveira/" rel="noopener noreferrer" target="_blank">
+                            <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-linkedin"></use></svg>
+                            <span data-profile="social-label">Ver no LinkedIn</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </section>
+            <div class="hero__portrait">
+                <!-- Stand-in brand illustration, not a photograph. Explicit dimensions reserve
+                     the space so nothing shifts as it loads (FR-037, SC-008). Replacing it is a
+                     one-file swap: drop a new image at this path with the same aspect ratio. -->
+                <img class="hero__portrait-image" src="assets/images/portrait.webp"
+                     width="800" height="600" fetchpriority="high"
+                     alt="Ilustração abstrata de colchetes angulares e uma barra, representando código">
+            </div>
+        </section>
 
-    <!-- Skills Section -->
-    <section id="skills" class="py-20 bg-gray-800 px-6">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold mb-12 text-center">Habilidades Técnicas</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-gray-700 p-6 rounded-xl">
-                    <h3 class="text-blue-400 text-xl mb-4">Frontend</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">VueJS</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">NuxtJS</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Tailwind</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">JavaScript</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Vite</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Vuetify</span>
-                    </div>
-                </div>
-                <div class="bg-gray-700 p-6 rounded-xl">
-                    <h3 class="text-blue-400 text-xl mb-4">Backend</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">PHP</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Laravel</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Node.js</span>
-                    </div>
-                </div>
-                <div class="bg-gray-700 p-6 rounded-xl">
-                    <h3 class="text-blue-400 text-xl mb-4">Bancos de Dados</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">SQL</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">MySQL</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">MongoDB</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Indexação de Dados</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Análise de Dados</span>
-                    </div>
-                </div>
-                <div class="bg-gray-700 p-6 rounded-xl">
-                    <h3 class="text-blue-400 text-xl mb-4">Ferramentas</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Docker</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Git</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">GitHub Actions</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Postman</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Insomnia</span>
-                    </div>
-                </div>
-                <div class="bg-gray-700 p-6 rounded-xl">
-                    <h3 class="text-blue-400 text-xl mb-4">Mobile</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">Flutter</span>
-                        <span class="bg-gray-600 px-3 py-1 rounded-full text-sm">BLOC</span>
-                    </div>
-                </div>
+        <!--
+          About is static, like the Hero copy and for the same reason: FR-018 requires it to
+          survive a script failure, so rendering it would render it twice (research R7).
+          js/data/profile.js is the source of truth; sync.test.js fails on drift.
+        -->
+        <section id="about" class="section" aria-labelledby="about-heading">
+            <h2 id="about-heading" class="section__heading">Sobre</h2>
+            <div class="section__body about" data-profile="about">
+                <p class="about__paragraph">Sou engenheiro de software com mais de quatro anos construindo sistemas de backend que rodam em produção — plataformas de saúde, gestão acadêmica e infraestrutura para cargas de trabalho de IA. Trabalho principalmente com PHP/Laravel, NestJS e Next.js, projetando APIs REST e integrações entre serviços com RabbitMQ, WebSockets, Docker e bancos relacionais.</p>
+                <p class="about__paragraph">O que mais me interessa é o problema difícil por trás do código: modernizar sistemas legados sem parar a operação, tornar o comportamento de produção observável antes que ele vire incidente, e deixar a base de código melhor do que encontrei — via code review, mentoria e decisões de arquitetura defensáveis. Busco times que tratem qualidade de engenharia como requisito, não como fase final.</p>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="py-20 px-6">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold mb-12 text-center">Projetos Recentes</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-800 p-6 rounded-xl hover:transform hover:scale-105 transition">
-                    <div class="bg-gray-700 h-48 rounded-lg mb-4"></div>
-                    <h3 class="text-xl font-semibold mb-2">Plataforma E-commerce</h3>
-                    <p class="text-gray-400">Solução completa com carrinho, pagamentos e painel administrativo</p>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                        <span class="text-sm text-blue-400">VueJS</span>
-                        <span class="text-sm text-blue-400">Laravel</span>
-                        <span class="text-sm text-blue-400">MySQL</span>
-                    </div>
-                </div>
-                <!-- Adicionar mais 2 projetos similares -->
+        <!--
+          Every section below is data-driven and is authored `hidden` (research R1). js/app.js
+          reveals one only after its component has produced content, and removes it outright when
+          the collection is empty. That is what makes "an empty collection leaves no trace" true
+          for a visitor whose script never runs (FR-002, FR-003, FR-074).
+
+          Section order answers the recruiter's questions in the order they ask them (FR-001):
+          who are you → what have you done → what can you build → how do you think → what else
+          shows seniority → how do I reach you.
+        -->
+        <section id="experience" class="section" aria-labelledby="experience-heading" hidden>
+            <h2 id="experience-heading" class="section__heading">Experiência</h2>
+            <div class="section__body" data-mount="experience"></div>
+        </section>
+
+        <!--
+          Selected Work. The id is `work`, naming the section as the recruiter and the navigation
+          see it; the module behind it is still js/data/projects.js, whose filename the
+          constitution mandates (research R6).
+
+          The collection ships EMPTY, so this section is absent from the rendered page entirely
+          until the owner supplies real case studies (FR-025, SC-003). That is the shipped state,
+          not a temporary one.
+        -->
+        <section id="work" class="section" aria-labelledby="work-heading" hidden>
+            <h2 id="work-heading" class="section__heading">Trabalhos Selecionados</h2>
+            <div class="section__body" data-mount="projects"></div>
+        </section>
+
+        <section id="skills" class="section" aria-labelledby="skills-heading" hidden>
+            <h2 id="skills-heading" class="section__heading">Habilidades Técnicas</h2>
+            <div class="section__body" data-mount="skills"></div>
+        </section>
+
+        <!-- Engineering Philosophy. Ships with real content authored from practices the
+             experience data already evidences (FR-031, research R14). -->
+        <section id="philosophy" class="section" aria-labelledby="philosophy-heading" hidden>
+            <h2 id="philosophy-heading" class="section__heading">Como Trabalho</h2>
+            <div class="section__body" data-mount="philosophy"></div>
+        </section>
+
+        <!-- Community. SHIPS EMPTY (FR-038): the owner has not supplied organisations or real
+             metrics, and no metric may be estimated or invented (FR-037). The section is absent
+             from the page entirely until real content lands. -->
+        <section id="community" class="section" aria-labelledby="community-heading" hidden>
+            <h2 id="community-heading" class="section__heading">Comunidade</h2>
+            <div class="section__body" data-mount="community"></div>
+        </section>
+
+        <section id="education" class="section" aria-labelledby="education-heading" hidden>
+            <h2 id="education-heading" class="section__heading">Formação</h2>
+            <div class="section__body" data-mount="education"></div>
+        </section>
+
+        <section id="certifications" class="section" aria-labelledby="certifications-heading" hidden>
+            <h2 id="certifications-heading" class="section__heading">Certificações</h2>
+            <div class="section__body" data-mount="certifications"></div>
+        </section>
+
+        <section id="contact" class="section" aria-labelledby="contact-heading">
+            <h2 id="contact-heading" class="section__heading">Entre em Contato</h2>
+            <!--
+              Static contact details, not rendered by JavaScript: primary contact must survive a
+              script failure (constitution IV). js/data/profile.js is the source of truth and
+              tests/data/sync.test.js fails if these strings drift from it.
+
+              The email anchor's visible text IS the address, which gives it a descriptive
+              accessible name without a separate label.
+            -->
+            <!--
+              Wrapped in .section__body like every other section, so the two-column layout at
+              the desktop breakpoint (sections.css) has exactly one content column to place.
+              Without it, each of the four blocks below would be laid out as a separate grid
+              item and the heading column would only align with the first of them.
+            -->
+            <div class="section__body">
+            <ul class="contact-details">
+                <li class="contact-details__item">
+                    <span class="contact-details__label">Localização</span>
+                    <span data-profile="location">Parnaíba, PI – Brasil</span>
+                </li>
+                <li class="contact-details__item">
+                    <span class="contact-details__label">Email</span>
+                    <a class="inline-link" href="mailto:bds.commus@gmail.com" data-profile="email">bds.commus@gmail.com</a>
+                </li>
+            </ul>
+
+            <!--
+              Contact routes (FR-040). LinkedIn and GitHub as distinct paths, each named so it
+              identifies its destination on its own (FR-059) — never "clique aqui".
+
+              There is no email BUTTON here by the owner's decision, but email is still a route:
+              the address above is a live mailto anchor whose visible text is the address itself,
+              so primary contact survives with no script and no form (constitution IV).
+
+              There is NO CV route authored here, because js/data/profile.js states no `cvUrl`.
+              A route whose destination is absent is omitted entirely, not rendered inert
+              (FR-041). When the owner supplies a CV link, add an <a> carrying
+              data-profile-optional="cvUrl" here and js/components/identity.js takes care of the
+              rest.
+
+              LinkedIn appears both here and in the Hero's social list. That duplication is
+              deliberate — identity in one place, conversion in the other — and the checks that
+              used to assume uniqueness were rewritten rather than worked around (FR-073).
+            -->
+            <ul class="contact-routes" aria-label="Formas de contato">
+                <!-- LinkedIn carries the primary fill now that it leads the list: a row of
+                     ghost-only buttons states no preference between the routes. -->
+                <li>
+                    <a class="button" href="https://www.linkedin.com/in/bruno-oliveira/"
+                       rel="noopener noreferrer" target="_blank">
+                        <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-linkedin"></use></svg>
+                        Conversar no LinkedIn
+                    </a>
+                </li>
+                <li>
+                    <a class="button button--ghost" href="https://github.com/BdsOliveira"
+                       rel="noopener noreferrer" target="_blank">
+                        <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-github"></use></svg>
+                        Ver código no GitHub
+                    </a>
+                </li>
+            </ul>
+            <!-- There is no contact form, by the owner's decision: there is no backend to submit
+                 to, and every route above works without JavaScript (constitution IV). -->
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Certifications -->
-    <section id="certs" class="py-20 bg-gray-800 px-6">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold mb-12 text-center">Certificações</h2>
-            <div class="max-w-2xl mx-auto">
-                <div class="bg-gray-700 p-6 rounded-xl mb-4">
-                    <div class="flex items-center">
-                        <div class="bg-blue-500 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                            🏆
-                        </div>
-                        <div>
-                            <h3 class="font-semibold">II Maratona de Programação da PUC-GOIÁS</h3>
-                            <p class="text-gray-400">Medalha de Prata - 2017</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-700 p-6 rounded-xl">
-                    <div class="flex items-center">
-                        <div class="bg-blue-500 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                            📘
-                        </div>
-                        <div>
-                            <h3 class="font-semibold">EF SET English Certificate</h3>
-                            <p class="text-gray-400">Score 49/100 (B1 Intermediate)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="py-20 px-6">
-        <div class="container mx-auto max-w-2xl">
-            <h2 class="text-3xl font-bold mb-12 text-center">Entre em Contato</h2>
-            <form class="space-y-6">
-                <div>
-                    <input type="text" placeholder="Nome" class="w-full bg-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <input type="email" placeholder="Email" class="w-full bg-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <textarea rows="5" placeholder="Mensagem" class="w-full bg-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-                </div>
-                <button class="w-full bg-blue-500 hover:bg-blue-600 py-4 rounded-lg font-medium transition">
-                    Enviar Mensagem
-                </button>
-            </form>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 py-12 px-6">
-        <div class="container mx-auto text-center">
-            <div class="flex justify-center space-x-6 mb-6">
-                <a href="https://github.com/BdsOliveira" target="_blank" class="text-gray-400 hover:text-blue-400">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-                </a>
-                <a href="https://www.linkedin.com/in/bruno-oliveira/" target="_blank" class="text-gray-400 hover:text-blue-400">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                </a>
-            </div>
-            <p class="text-gray-400">&copy; 2024 Bruno Oliveira. Todos os direitos reservados.</p>
-        </div>
+    <footer class="site-footer">
+        <!-- The year is derived at load, like the years-of-experience figure above it. The
+             literal here is a no-script fallback that can drift by at most one year, not a
+             second source of truth (FR-072, research R4). -->
+        <p class="site-footer__copyright">&copy; <span id="copyright-year">2026</span> Bruno Oliveira. Todos os direitos reservados.</p>
     </footer>
 
-    <script>
-        const currentYear = new Date().getFullYear();
-        document.getElementById("anos").textContent = currentYear - 2022;
-    </script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
