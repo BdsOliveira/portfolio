@@ -23,7 +23,10 @@ describe('static HTML matches js/data/profile.js', () => {
   // location and email joined this list in feature 002: primary contact must survive a script
   // failure, so it is authored in the document — which means it can drift, which means it
   // needs this check.
-  for (const field of ['name', 'role', 'summary', 'location', 'email']) {
+  // `headline` and `availability` joined in feature 003 for the same reason: FR-018 requires the
+  // positioning statement in the served document, which means it can drift, which means it needs
+  // this check (FR-010).
+  for (const field of ['name', 'role', 'headline', 'summary', 'availability', 'location', 'email']) {
     test(`${field} matches exactly`, () => {
       const inHtml = staticValue(field);
 
@@ -35,6 +38,45 @@ describe('static HTML matches js/data/profile.js', () => {
       );
     });
   }
+
+  test('every About paragraph matches, in order', () => {
+    const container = doc.querySelector('[data-profile="about"]');
+    assert.ok(container, 'index.html has no [data-profile="about"] container');
+
+    const paragraphs = [...container.querySelectorAll('p')].map((p) => p.textContent.trim());
+
+    assert.deepEqual(
+      paragraphs,
+      profile.about,
+      'index.html and profile.js have drifted apart on the About content',
+    );
+  });
+
+  for (const key of ['primaryCta', 'secondaryCta']) {
+    test(`${key} label and destination match exactly`, () => {
+      const anchor = doc.querySelector(`a[data-profile="${key}"]`);
+
+      assert.ok(anchor, `index.html has no [data-profile="${key}"] anchor`);
+      assert.equal(anchor.textContent.trim(), profile[key].label, `${key} label has drifted`);
+      assert.equal(anchor.getAttribute('href'), profile[key].href, `${key} destination has drifted`);
+    });
+  }
+
+  test('a CV affordance exists only while profile.cvUrl does (FR-041)', () => {
+    const affordances = [...doc.querySelectorAll('[data-profile-optional="cvUrl"]')];
+
+    if (profile.cvUrl === undefined) {
+      // js/app.js prunes these at runtime, but a visitor with no script never gets that pass —
+      // so while the owner has supplied no CV, the markup must not carry one at all.
+      assert.deepEqual(
+        affordances.map((node) => node.outerHTML),
+        [],
+        'index.html offers a CV route the profile has no link for',
+      );
+    } else {
+      assert.ok(affordances.length > 0, 'profile.cvUrl exists but nothing on the page points at it');
+    }
+  });
 
   test('the email is an actionable mailto: link, not just text', () => {
     const anchor = doc.querySelector('a[data-profile="email"]');
@@ -61,23 +103,112 @@ describe('static HTML matches js/data/profile.js', () => {
     }
   });
 
+  /**
+   * A destination can legitimately be reachable from more than one place: the secondary call to
+   * action points at the GitHub profile, and so does the social list. FR-073 says that must be a
+   * deliberate choice that does not break an assumption of uniqueness — so this asserts what
+   * actually matters (at least one anchor carries the profile's label, and *no* anchor to the
+   * destination is vaguely named), rather than that exactly one anchor exists.
+   */
   test('every social link carries its descriptive label, not "click here"', () => {
     for (const link of profile.socialLinks) {
-      const anchor = doc.querySelector(`a[href="${link.url}"]`);
-      const name = (anchor.getAttribute('aria-label') ?? anchor.textContent).trim();
+      const anchors = [...doc.querySelectorAll(`a[href="${link.url}"]`)];
+      assert.ok(anchors.length > 0, `${link.platform} link is missing from index.html`);
 
-      assert.equal(name, link.label, `${link.platform} link text has drifted from profile.js`);
-      assert.doesNotMatch(name, /^(clique aqui|click here|aqui|link)$/i);
+      const names = anchors.map((a) => (a.getAttribute('aria-label') ?? a.textContent).trim());
+
+      assert.ok(
+        names.includes(link.label),
+        `no ${link.platform} anchor carries profile.js's label "${link.label}" — found: ${names.join(' | ')}`,
+      );
+
+      for (const name of names) {
+        assert.doesNotMatch(name, /^(clique aqui|click here|aqui|link|saiba mais)$/i);
+        assert.ok(name.length > 4, `a ${link.platform} anchor has a non-descriptive name: "${name}"`);
+      }
     }
   });
 
   test('the social links use the icon each entry names', () => {
     for (const link of profile.socialLinks) {
-      const anchor = doc.querySelector(`a[href="${link.url}"]`);
-      const href = anchor.querySelector('use')?.getAttribute('href');
+      // The entry in the social list is the one that carries the glyph; a call to action
+      // pointing at the same destination is a text button and is not required to.
+      const anchor = doc.querySelector(`.social-links a[href="${link.url}"]`);
+      assert.ok(anchor, `${link.platform} is missing from the social list`);
 
+      const href = anchor.querySelector('use')?.getAttribute('href');
       assert.equal(href, `#${link.icon}`, `${link.platform} renders the wrong glyph`);
     }
+  });
+
+  /**
+   * The JSON-LD block is a mirror under FR-010, so it is verified like every other one. It is
+   * also the mirror most likely to rot: nothing on the rendered page changes when it drifts,
+   * and the only reader who notices is a crawler nobody is watching (FR-068, research R9).
+   */
+  describe('the JSON-LD Person block mirrors profile.js', () => {
+    const block = doc.querySelector('script[type="application/ld+json"]');
+
+    test('it exists and is valid JSON describing a Person', () => {
+      assert.ok(block, 'index.html carries no JSON-LD block');
+
+      const data = JSON.parse(block.textContent);
+      assert.equal(data['@type'], 'Person');
+      assert.equal(data['@context'], 'https://schema.org');
+    });
+
+    test('every field agrees with profile.js, adding no new claim', () => {
+      const data = JSON.parse(block.textContent);
+
+      assert.equal(data.name, profile.name);
+      assert.equal(data.jobTitle, profile.role);
+      assert.equal(data.description, profile.headline);
+      assert.equal(data.email, profile.email);
+      assert.equal(data.address?.addressLocality, profile.location);
+      assert.deepEqual(
+        data.sameAs,
+        profile.socialLinks.map((link) => link.url),
+        'sameAs has drifted from profile.socialLinks',
+      );
+    });
+
+    test('its url matches the canonical URL the page declares', () => {
+      const data = JSON.parse(block.textContent);
+      const canonical = doc.querySelector('link[rel="canonical"]')?.getAttribute('href');
+
+      assert.equal(data.url, canonical);
+    });
+  });
+
+  /**
+   * FR-072. Same shape as the years-of-experience fallback below: derived at load, with a
+   * literal in index.html that keeps the sentence readable before the script runs. The literal
+   * can drift by at most a year, which is what this pair asserts.
+   */
+  describe('the footer copyright year', () => {
+    test('has a pre-JS fallback that is a plain year', () => {
+      const placeholder = doc.querySelector('#copyright-year');
+
+      assert.ok(placeholder, 'index.html has no #copyright-year element');
+      assert.match(placeholder.textContent.trim(), /^\d{4}$/);
+    });
+
+    test('the fallback is close enough to the current year to not read as wrong', () => {
+      const fallback = Number(doc.querySelector('#copyright-year').textContent.trim());
+      const current = new Date().getFullYear();
+
+      assert.ok(
+        Math.abs(fallback - current) <= 1,
+        `the static copyright year is ${fallback} but the current year is ${current}`,
+      );
+    });
+
+    test('no other hardcoded year is left in the footer', () => {
+      const footer = doc.querySelector('.site-footer');
+      const withoutPlaceholder = footer.textContent.replace(/\d{4}/, '');
+
+      assert.doesNotMatch(withoutPlaceholder, /\b(19|20)\d{2}\b/, 'a second literal year survives');
+    });
   });
 
   test('the years-of-experience placeholder has a pre-JS fallback', () => {

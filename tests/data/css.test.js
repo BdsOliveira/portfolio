@@ -46,13 +46,21 @@ describe('CSS contracts', () => {
     }
   });
 
-  test('S-2 breakpoints are the three declared in research R7', () => {
+  test('S-2 breakpoints are the two declared in research R7', () => {
     const allowed = new Set(['48rem', '64rem']);
 
     for (const file of MANDATED) {
-      for (const match of stripComments(read(file)).matchAll(/min-width:\s*([^)]+)\)/g)) {
-        const value = match[1].trim();
-        assert.ok(allowed.has(value), `${file} introduces an undeclared breakpoint: ${value}`);
+      // Scoped to the `@media` prelude, not the whole stylesheet. `min-width: 0` is a legitimate
+      // declaration — it is what stops a grid or flex item refusing to shrink below its longest
+      // word, and is half the fix for the horizontal-overflow defect (FR-065). Scanning the
+      // whole file conflated the two and flagged an overflow fix as a rogue breakpoint.
+      const preludes = [...stripComments(read(file)).matchAll(/@media([^{]+)/g)].map((m) => m[1]);
+
+      for (const prelude of preludes) {
+        for (const match of prelude.matchAll(/min-width:\s*([^)]+)\)/g)) {
+          const value = match[1].trim();
+          assert.ok(allowed.has(value), `${file} introduces an undeclared breakpoint: ${value}`);
+        }
       }
     }
   });
@@ -109,5 +117,31 @@ describe('CSS contracts', () => {
 
   test('a prefers-reduced-motion block exists (P-12)', () => {
     assert.match(read('base.css'), /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  });
+
+  /**
+   * The `hidden` attribute is the whole mechanism behind FR-002/FR-003: a data-driven section
+   * ships hidden and js/app.js reveals it only once content mounts (research R1).
+   *
+   * The UA stylesheet already hides `[hidden]`, but any author `display` declaration on such an
+   * element silently wins — and the visitors it breaks for are the ones running no script, who
+   * are the least likely to report it. So the rule is pinned in base.css, and pinned here.
+   */
+  test('the [hidden] rule survives, since the empty-section guarantee rests on it', () => {
+    assert.match(
+      stripComments(read('base.css')),
+      /\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/,
+      'base.css no longer forces [hidden] to display: none',
+    );
+  });
+
+  test('scroll-behavior is smooth and yields to prefers-reduced-motion (FR-007)', () => {
+    const css = stripComments(read('base.css'));
+
+    assert.match(css, /scroll-behavior:\s*smooth/, 'anchor navigation is not smooth by default');
+
+    const reduced = css.match(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*$/)?.[0];
+    assert.ok(reduced, 'no reduced-motion block to check');
+    assert.match(reduced, /scroll-behavior:\s*auto/, 'smooth scrolling ignores reduced motion');
   });
 });

@@ -15,15 +15,21 @@ reload the page, done — no markup to touch, no logic to change, nothing to reb
 
 | To change… | Edit | Notes |
 |------------|------|-------|
-| Projects | `js/data/projects.js` | Copy an entry, change the values |
+| Selected Work (case studies) | `js/data/projects.js` | **Ships empty.** The section is absent until you add an entry — see "Adding a case study" below |
 | Skills | `js/data/skills.js` | Add a string to a group's `skills`, or add a group |
+| How I work | `js/data/philosophy.js` | Each principle must trace to something in `experiences.js` — see "Engineering Philosophy" below |
+| Community | `js/data/community.js` | **Ships empty.** No metric may be estimated or invented — see "Community metrics" below |
 | Certifications | `js/data/certifications.js` | `icon` names a symbol in the sprite |
 | Work experience | `js/data/experiences.js` | Newest first — array order is display order. `endDate: null` renders "Atual" |
 | Education | `js/data/education.js` | Both years optional; see "Education dates" below |
-| Name, role, summary, location, email, social links | `js/data/profile.js` **and** `index.html` | See "The one duplication" below |
+| Name, role, positioning statement, About, availability, CV link, calls to action, location, email, social links | `js/data/profile.js` **and** `index.html` | See "The one duplication" below |
 
 A section whose collection is empty is removed from the page entirely, so emptying an array is
 how you hide a section — no markup change.
+
+The section order is fixed in `index.html` and answers a recruiter's questions in the order they
+ask them: who are you → what have you done → what can you build → how do you think → what else
+shows seniority → how do I reach you.
 
 ### Education dates
 
@@ -38,7 +44,14 @@ how you hide a section — no markup change.
 Writing `endYear: null` for a course that finished but whose year you do not have would
 announce it as still in progress. Leave the field out instead.
 
-### Adding a project
+### Adding a case study
+
+`js/data/projects.js` ships **empty**, on purpose: there is no placeholder project, because a
+recruiter who suspects a project is filler learns something worse than nothing. The section
+appears the moment you add an entry, and nothing else needs to change.
+
+Only `id`, `title` and `description` are required. Every other field is optional, and an absent
+one produces no element at all — no empty box, no orphaned label.
 
 ```js
 // js/data/projects.js
@@ -46,14 +59,50 @@ announce it as still in progress. Leave the field out instead.
   id: 'meu-projeto',                       // kebab-case, unique, stable
   title: 'Meu Projeto',
   description: 'O que ele faz, em uma frase.',
-  technologies: ['VueJS', 'Laravel'],      // any number, minimum one
-  repositoryUrl: 'https://github.com/…',   // optional — link omitted when absent
+
+  tagline: 'Uma linha sob o título.',      // optional
+
+  // The case study. Each present part renders as a labelled entry; they always read in this
+  // order regardless of the order you type them in.
+  problem: 'Que problema real ele resolveu.',
+  solution: 'O que foi construído.',
+  contribution: 'O que você fez, especificamente.',
+  architecture: 'Como foi estruturado, e por quê.',
+  result: 'O que mudou depois — com números, se você os tiver.',
+
+  technologies: ['Laravel', 'PostgreSQL'], // optional; renders exactly as many chips as it holds
+  repositoryUrl: 'https://github.com/…',   // optional
   liveUrl: 'https://…',                    // optional
+  caseStudyUrl: 'https://…',               // optional — a written write-up elsewhere
   image: 'assets/images/meu-projeto.webp', // optional
   imageAlt: 'Captura de tela do Meu Projeto', // required whenever `image` is present
-  isVisible: true,                         // false hides it without deleting it
+  isVisible: true,                         // false hides it; absent means visible
 }
 ```
+
+The file is called `projects.js` and the section is called Selected Work. The filename is fixed
+by the constitution's directory layout; the section name is what the recruiter reads.
+
+### Engineering Philosophy
+
+`js/data/philosophy.js` is the only place on the site that states something the CV does not.
+Two rules, and both matter more than how the sentence reads:
+
+1. **Every principle must trace to evidence.** Each entry carries a comment naming the role in
+   `js/data/experiences.js` it comes from. A principle that traces to nothing does not belong
+   there, however good it sounds.
+2. **It must be falsifiable.** "Eu me importo com qualidade" is not a position — nobody claims
+   the opposite. A reader has to be able to disagree with it.
+
+### Community metrics
+
+`js/data/community.js` ships **empty**, and its metrics carry the strictest rule in the project:
+**no number may be estimated, rounded up, extrapolated or invented.** Nothing catches a rounded
+figure — a schema cannot tell "240 membros" counted from "about 250, probably". If you do not
+know the real number, omit the metric; an activity with no metrics renders perfectly well.
+
+Zero is a real value and renders. "0 palestras este ano" is a true statement; a guessed "5" is
+not.
 
 Rules the data files follow, all enforced by `npm run test:data`:
 
@@ -66,16 +115,32 @@ Rules the data files follow, all enforced by `npm run test:data`:
 
 ### Empty sections disappear
 
-A collection that is empty renders nothing at all — the whole `<section>` is removed, heading
-included, leaving no gap. `experiences.js` and `education.js` ship empty for exactly this
-reason. Add one entry and the section appears, correctly themed, with no code change.
+A collection that is empty renders nothing at all — no heading, no container, no gap. This holds
+**whether or not JavaScript runs**, which is the part worth understanding before you edit
+`index.html`:
+
+- every data-driven `<section>` is authored with the `hidden` attribute;
+- `js/app.js` removes `hidden` only after that section's component has actually produced content;
+- an empty collection makes the component return `null`, and the section is removed outright.
+
+So with scripts disabled the page shows Hero, About and Contact — all static, all real content —
+and nothing else. The alternative, removing empty sections at runtime, left a visitor whose
+script never ran looking at six headings above six empty regions.
+
+The navigation follows the same rule: an item bound to a data-driven section ships `hidden` too,
+and is revealed only when its target actually rendered. A link never points at a section that is
+not there.
+
+`projects.js` and `community.js` ship empty today. Add one entry and the section appears,
+correctly themed and reachable from the navigation, with no code change.
 
 ### The one duplication
 
-`name`, `role`, `summary`, `location` and `email` appear both in `js/data/profile.js` and as
-static text in `index.html`, as do the social links. That is deliberate: a visitor whose
-JavaScript fails, and a crawler that never runs one, must still get the owner's identity and a
-way to make contact. Holding a string twice is only honest if drift is a caught error, so
+`name`, `role`, `headline`, `summary`, the About paragraphs, `availability`, both calls to
+action, `location` and `email` appear both in `js/data/profile.js` and as static text in
+`index.html`, as do the social links and the JSON-LD block in `<head>`. That is deliberate: a
+visitor whose JavaScript fails, and a crawler that never runs one, must still get the owner's
+identity, positioning and a way to make contact. Holding a string twice is only honest if drift is a caught error, so
 `tests/data/sync.test.js` fails the moment the two disagree. **Change both, or the tests will
 tell you.**
 
@@ -141,8 +206,11 @@ css/
 └── sections.css    per-section layout; min-width media queries only
 
 js/
-├── app.js          the only entry point: wires data to components and mounts them
-├── components/     rendering only, no content literals
+├── app.js          the only entry point: wires data to components, mounts them, then
+│                   reveals each section that produced content and reconciles the navigation
+├── components/     rendering only, no content literals — plus navigation.js and identity.js,
+│                   which carry interaction and DOM reconciliation instead (see the plan's
+│                   Complexity Tracking entry for why they live here)
 └── data/           content only, no logic
 
 tests/

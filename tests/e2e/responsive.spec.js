@@ -21,16 +21,54 @@ for (const viewport of VIEWPORTS) {
       expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
     });
 
-    test('an artificially long project title does not force horizontal scroll', async ({ page }) => {
-      await page.evaluate(() => {
-        const title = document.querySelector('.project-card__title');
-        if (title) title.textContent = 'Plataforma'.repeat(12);
+    /**
+     * FR-065, SC-011, research R10.
+     *
+     * The original form injected its long string into `.project-card__title`. Selected Work now
+     * ships empty, so that element does not exist and the test quietly became a no-op — it
+     * passed while asserting nothing, which is worse than failing.
+     *
+     * Rebound to elements that are always on the page, and to an unbreakable single word rather
+     * than a long phrase: a phrase wraps at its spaces without any help, so the old fixture
+     * would not have caught the defect it was written for either.
+     */
+    test('artificially long unbreakable content does not force horizontal scroll', async ({
+      page,
+    }) => {
+      const targets = ['h1', 'h2', '.hero__headline', '.about__paragraph', '.principle__detail'];
+
+      for (const selector of targets) {
+        const overflowed = await page.evaluate((sel) => {
+          const node = document.querySelector(sel);
+          if (!node) return null;
+
+          const original = node.textContent;
+          node.textContent = 'Plataforma'.repeat(12);
+
+          const overflows =
+            document.documentElement.scrollWidth > document.documentElement.clientWidth;
+
+          node.textContent = original;
+          return overflows;
+        }, selector);
+
+        expect(overflowed, `a long word in ${selector} pushed the page sideways`).not.toBe(true);
+      }
+    });
+
+    test('no element overflows its container (SC-011)', async ({ page }) => {
+      const offenders = await page.evaluate(() => {
+        const root = document.documentElement;
+        return [...document.querySelectorAll('body *')]
+          .filter((node) => {
+            const box = node.getBoundingClientRect();
+            return box.width > 0 && (box.right > root.clientWidth + 1 || box.left < -1);
+          })
+          .map((node) => `${node.tagName.toLowerCase()}.${node.className}`)
+          .slice(0, 10);
       });
 
-      const overflows = await page.evaluate(
-        () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
-      );
-      expect(overflows).toBe(false);
+      expect(offenders).toEqual([]);
     });
 
     test('the theme is applied to the page itself', async ({ page }) => {

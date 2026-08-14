@@ -26,6 +26,13 @@
   margin-block-end: var(--space-lg);
 }
 
+/* Grid and flex items default to `min-width: auto`, which refuses to shrink below the longest
+   unbreakable word. Paired with the body's overflow-wrap, this is what keeps every section
+   inside the viewport at 320px (FR-065). */
+.section__body {
+  min-width: 0;
+}
+
 /* Header and navigation -------------------------------------------------- */
 
 /*
@@ -56,6 +63,51 @@
   font-size: var(--text-lg);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
+}
+
+/*
+ * The disclosure toggle.
+ *
+ * `[data-collapsible]` is set by js/components/navigation.js, so every rule that hides the list
+ * is scoped to it. Without the script the attribute never appears, the list stays visible, and
+ * a no-script visitor gets every destination — taller, but complete (research R2).
+ */
+.site-nav__toggle {
+  padding: var(--space-3xs) var(--space-xs);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.site-nav__toggle:hover {
+  border-color: var(--color-accent);
+}
+
+.site-nav[data-collapsible="true"] .site-nav__list {
+  display: none;
+  /* Full-width row below the brand and toggle, so the links are not squeezed beside them. */
+  flex-basis: 100%;
+}
+
+.site-nav[data-collapsible="true"] .site-nav__toggle[aria-expanded="true"] + .site-nav__list {
+  display: flex;
+}
+
+@media (min-width: 48rem) {
+  /* Wide enough for the row: the disclosure is unnecessary, so the control goes away and the
+     list is unconditionally visible again. */
+  .site-nav__toggle {
+    display: none;
+  }
+
+  .site-nav[data-collapsible="true"] .site-nav__list {
+    display: flex;
+    flex-basis: auto;
+  }
 }
 
 .site-nav__list {
@@ -94,12 +146,43 @@
   color: var(--color-text);
 }
 
+/*
+ * The positioning statement is the largest thing on the page after the name, because it is the
+ * claim the rest of the page argues for (FR-011, FR-012). Typography and hierarchy carry the
+ * emphasis — no gradient, no decorative device (FR-070).
+ */
+.hero__headline {
+  max-width: var(--measure);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-heading);
+  margin-block-start: var(--space-2xs);
+}
+
 .hero__summary {
   max-width: var(--measure);
   color: var(--color-text-muted);
 }
 
-.hero__cta {
+/* --color-text on --color-surface-accent is 9.6:1 (variables.css). */
+.hero__availability {
+  align-self: flex-start;
+  padding: var(--space-3xs) var(--space-xs);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-accent);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+}
+
+/*
+ * Wraps rather than scrolls: at 320px the two calls to action stack, which is why the container
+ * is a wrapping flex row and not a grid with fixed tracks (FR-064, FR-065).
+ */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
   margin-block-start: var(--space-2xs);
 }
 
@@ -136,6 +219,20 @@
   border-radius: var(--radius-lg);
 }
 
+/* About ------------------------------------------------------------------ */
+
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* Capped at the measure so the two paragraphs stay readable rather than spanning the grid. */
+.about__paragraph {
+  max-width: var(--measure);
+  color: var(--color-text-muted);
+}
+
 /* Skills ----------------------------------------------------------------- */
 
 .skill-groups {
@@ -148,17 +245,30 @@
   font-size: var(--text-lg);
 }
 
-/* Projects --------------------------------------------------------------- */
+/* Selected Work ----------------------------------------------------------- */
 
 .project-list {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--space-xl);
 }
 
+/*
+ * `min-width: 0` is load-bearing, not tidiness: a grid item's default `min-width: auto` refuses
+ * to shrink below its longest unbreakable word, which is how a long case-study title pushed the
+ * whole document into horizontal scroll at 320px (FR-065, SC-011). The overflow-wrap below is
+ * the second half of the same fix, for a single word longer than the whole card.
+ */
 .project-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-2xs);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.project-card__tagline {
+  color: var(--color-accent);
+  font-size: var(--text-sm);
 }
 
 .project-card__image {
@@ -180,6 +290,87 @@
   gap: var(--space-2xs);
   margin-block-start: auto;
   padding-block-start: var(--space-2xs);
+}
+
+/* Engineering Philosophy --------------------------------------------------- */
+
+.principle-list {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.principle {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding-inline-start: var(--space-sm);
+  border-inline-start: var(--border-width) solid var(--color-border);
+}
+
+.principle__title {
+  font-size: var(--text-lg);
+  line-height: var(--leading-tight);
+  margin-block-end: var(--space-3xs);
+}
+
+.principle__detail {
+  max-width: var(--measure);
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 64rem) {
+  /* Two columns only at the widest breakpoint: a stated position needs its full measure to be
+     read as an argument rather than as a slogan. */
+  .principle-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+  }
+}
+
+/* Community ---------------------------------------------------------------- */
+
+.community-list {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.community {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.community__organisation {
+  font-size: var(--text-lg);
+}
+
+.community__contribution {
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+}
+
+.community__period {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.community__description {
+  max-width: var(--measure);
+  color: var(--color-text-muted);
+}
+
+.community__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  padding-block-start: var(--space-2xs);
+}
+
+@media (min-width: 48rem) {
+  .community-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* Certifications --------------------------------------------------------- */
@@ -244,6 +435,28 @@
 }
 
 /* Contact ---------------------------------------------------------------- */
+
+/*
+ * The closing call to action (FR-042): prominent through hierarchy and spacing, not through
+ * sales devices. No gradient, no oversized panel, no urgency.
+ */
+.contact__availability {
+  max-width: var(--measure);
+  margin-block-end: var(--space-md);
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+
+/*
+ * Four distinct routes rather than one button and some prose (FR-040). Wraps at every width, so
+ * a route is never pushed off-screen or truncated at 320px.
+ */
+.contact-routes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-block-end: var(--space-lg);
+}
 
 .contact-details {
   display: grid;

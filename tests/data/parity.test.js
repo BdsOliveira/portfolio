@@ -37,18 +37,48 @@ const text = normalize(doc.body.textContent);
 
 const present = (value) => text.includes(normalize(value));
 
+/**
+ * Headings that must be on the rendered page.
+ *
+ * "Trabalhos Selecionados" (feature 003's replacement for "Projetos Recentes") is deliberately
+ * NOT here: its collection ships empty, so app.js removes the section outright and the heading
+ * is correctly absent (FR-025, SC-003). The section's own absence is asserted below.
+ *
+ * Experiência and Formação render for the first time in feature 002: their collections shipped
+ * empty in 001, so app.js removed both sections outright.
+ */
 const SECTION_HEADINGS = [
+  'Sobre',
   'Habilidades Técnicas',
-  'Projetos Recentes',
+  'Como Trabalho',
   'Certificações',
-  // Experiência and Formação render for the first time in feature 002: their collections
-  // shipped empty, so app.js removed both sections outright.
   'Experiência',
   'Formação',
   'Entre em Contato',
 ];
 
-const NAV_LABELS = ['Home', 'Skills', 'Projetos', 'Certificações', 'Contato'];
+/**
+ * Navigation labels are page chrome, not CV content, and feature 003 changes them deliberately:
+ * FR-004 requires a link to every section present on the page, which the pre-migration five did
+ * not provide — Experience and Education were unreachable. "Home" became "Início" in the same
+ * pass, since the rest of the navigation is Portuguese.
+ *
+ * The list is kept, rather than deleted, because it is still the only check that would notice a
+ * navigation destination silently disappearing. Nothing about the CV assertions below changes
+ * (FR-051, SC-015).
+ */
+const NAV_LABELS = [
+  'Início',
+  'Sobre',
+  'Experiência',
+  'Trabalhos',
+  'Skills',
+  'Como Trabalho',
+  'Comunidade',
+  'Formação',
+  'Certificações',
+  'Contato',
+];
 
 // content-inventory.md §1
 const IDENTITY = [
@@ -91,20 +121,17 @@ const REMOVED_SKILLS = [
 ];
 
 /**
- * ⚠ WHITELISTED EXCEPTION — do not "clean this up".
+ * The whitelist that used to live here is gone (feature 003, FR-024).
  *
- * These two strings are the only content on the page that does NOT trace to the CV. They are a
- * placeholder project carried over from before the data-driven migration, and the owner
- * decided to keep them rather than delay the CV update on sourcing real project content
- * (spec 002 Accepted exceptions, E-1; FR-025).
+ * Through features 001 and 002 these two strings were the only content on the page that did not
+ * trace to the CV — a fictional "Plataforma E-commerce" placeholder, asserted *present* under a
+ * documented exception so it could not vanish or linger unnoticed.
  *
- * They are asserted *present* on purpose. Deleting these assertions because "the CV has no
- * projects" removes the only signal that would notice the placeholder quietly disappearing —
- * or quietly staying forever.
- *
- * When real projects land, replace this list with them and delete this comment.
+ * Feature 003 deletes the placeholder and ships Selected Work empty (FR-025). So the assertion
+ * inverts: these strings must now be **absent**. Deleting this list entirely would remove the
+ * only signal that would notice the placeholder coming back.
  */
-const PROJECT_CONTENT = [
+const REMOVED_PLACEHOLDER_CONTENT = [
   'Plataforma E-commerce',
   'Solução completa com carrinho, pagamentos e painel administrativo',
 ];
@@ -159,10 +186,15 @@ const LINK_DESTINATIONS = [
   'https://www.linkedin.com/in/bruno-oliveira/',
 ];
 
+/**
+ * Sections that must be present on the rendered page. `#work` is not here for the same reason
+ * its heading is not: the collection is empty, so the section is removed (FR-002, SC-003).
+ */
 const SECTION_IDS = [
   '#hero',
+  '#about',
   '#skills',
-  '#projects',
+  '#philosophy',
   '#certifications',
   '#experience',
   '#education',
@@ -176,7 +208,6 @@ describe('the page states what the CV states', () => {
     ['identity content', IDENTITY],
     ['skill groups', SKILL_GROUPS],
     ['skill tags', SKILL_TAGS],
-    ['project content', PROJECT_CONTENT],
     ['certification content', CERTIFICATION_CONTENT],
     ['experience content', EXPERIENCE_CONTENT],
     ['experience achievements', EXPERIENCE_ACHIEVEMENTS],
@@ -190,6 +221,16 @@ describe('the page states what the CV states', () => {
       assert.deepEqual(missing, [], `${label} lost in migration`);
     });
   }
+
+  test('the placeholder project is gone and stays gone (FR-024)', () => {
+    const survivors = REMOVED_PLACEHOLDER_CONTENT.filter((value) => present(value));
+
+    assert.deepEqual(
+      survivors,
+      [],
+      'the fictional placeholder project is back on the page — no fact may be stated that the owner did not supply (SC-007)',
+    );
+  });
 
   test('every section still exists', () => {
     const missing = SECTION_IDS.filter((id) => !doc.querySelector(id));
