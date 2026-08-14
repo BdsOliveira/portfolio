@@ -13,6 +13,7 @@ import experiences from './data/experiences.js';
 import education from './data/education.js';
 import philosophy from './data/philosophy.js';
 import community from './data/community.js';
+import talks from './data/talks.js';
 
 import { renderHero } from './components/hero.js';
 import { renderProjects } from './components/projects.js';
@@ -22,6 +23,7 @@ import { renderExperience } from './components/experience.js';
 import { renderEducation } from './components/education.js';
 import { renderPhilosophy } from './components/philosophy.js';
 import { renderCommunity } from './components/community.js';
+import { renderTalks } from './components/talks.js';
 import { pruneOptionalIdentity, renderCopyrightYear } from './components/identity.js';
 import { revealNavigation, enableMobileNavigation } from './components/navigation.js';
 
@@ -42,6 +44,10 @@ export const sections = [
   // Same shape as the hero's derived figure: a static fallback in index.html, overwritten with
   // the real value at load. `section: null` — a failure here must leave the fallback standing.
   { mount: '#copyright-year', section: null, render: renderCopyrightYear, data: profile },
+  // Directly under the hero on the page, and listed here in that order for the same reason every
+  // other binding is: this array is the only place the page's section order is stated twice, so
+  // keeping it aligned with index.html is what stops the two drifting apart.
+  { mount: '[data-mount="talks"]', section: '#talks', render: renderTalks, data: talks },
   { mount: '[data-mount="skills"]', section: '#skills', render: renderSkills, data: skills },
   // Section id is `#work` (Selected Work); the data module keeps its mandated name (research R6).
   { mount: '[data-mount="projects"]', section: '#work', render: renderProjects, data: projects },

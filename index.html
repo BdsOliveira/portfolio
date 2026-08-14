@@ -114,6 +114,7 @@
             </button>
             <ul class="site-nav__list" id="site-nav-list">
                 <li data-nav-for="hero"><a href="#hero">Início</a></li>
+                <li data-nav-for="talks" hidden><a href="#talks">Palestras</a></li>
                 <li data-nav-for="about"><a href="#about">Sobre</a></li>
                 <li data-nav-for="experience" hidden><a href="#experience">Experiência</a></li>
                 <li data-nav-for="work" hidden><a href="#work">Trabalhos</a></li>
@@ -177,6 +178,20 @@
                      width="800" height="600" fetchpriority="high"
                      alt="Ilustração abstrata de colchetes angulares e uma barra, representando código">
             </div>
+        </section>
+
+        <!--
+          Palestras sits here, directly under the Hero, because it is the section carrying
+          photographs and that attention is worth the most before it has been spent (FR-010).
+
+          Data-driven, so it ships `hidden` like every section below it: js/app.js reveals it only
+          once js/components/talks.js has produced content, and removes it outright when the
+          collection is empty. The collection ships EMPTY — no talk may be invented (FR-008) — so
+          today this section is absent from the rendered page entirely.
+        -->
+        <section id="talks" class="section" aria-labelledby="talks-heading" hidden>
+            <h2 id="talks-heading" class="section__heading">Palestras</h2>
+            <div class="section__body" data-mount="talks"></div>
         </section>
 
         <!--
