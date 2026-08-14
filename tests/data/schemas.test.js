@@ -143,6 +143,62 @@ describe('data integrity', () => {
       assert.ok(errors.some((error) => error.includes('does not exist')));
     });
 
+    /**
+     * Evidence is self-hosted by definition, so the ways it goes wrong are a source that is not
+     * ours, a path pointing at nothing, and a missing accessible name or reserved box. Each is
+     * caught here rather than on a rendered page nobody re-reads.
+     */
+    const certificationWith = (evidence) => [
+      { id: 'probe', title: 'X', icon: 'icon-trophy', evidence },
+    ];
+
+    test('rejects certification evidence hosted outside assets/', () => {
+      const errors = validateCollection(
+        certificationWith({
+          src: 'https://www.instagram.com/p/probe/',
+          alt: 'probe',
+          width: 800,
+          height: 600,
+        }),
+        SCHEMAS.Certification,
+        options,
+      );
+      assert.ok(errors.some((error) => error.includes('under assets/')));
+    });
+
+    test('rejects certification evidence whose file is not in the repository', () => {
+      const errors = validateCollection(
+        certificationWith({
+          src: 'assets/images/definitely-not-here.webp',
+          alt: 'probe',
+          width: 800,
+          height: 600,
+        }),
+        SCHEMAS.Certification,
+        options,
+      );
+      assert.ok(errors.some((error) => error.includes('does not exist')));
+    });
+
+    test('rejects certification evidence without alt text', () => {
+      const errors = validateCollection(
+        certificationWith({ src: 'assets/images/probe.webp', width: 800, height: 600 }),
+        SCHEMAS.Certification,
+        { assetExists: () => true },
+      );
+      assert.ok(errors.some((error) => error.includes('alt')));
+    });
+
+    test('rejects certification evidence without intrinsic dimensions', () => {
+      const errors = validateCollection(
+        certificationWith({ src: 'assets/images/probe.webp', alt: 'probe' }),
+        SCHEMAS.Certification,
+        { assetExists: () => true },
+      );
+      assert.ok(errors.some((error) => error.includes('width')));
+      assert.ok(errors.some((error) => error.includes('height')));
+    });
+
     test('rejects image without imageAlt', () => {
       const errors = validateCollection(
         [

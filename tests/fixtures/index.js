@@ -376,6 +376,14 @@ export const certifications = [
     detail: 'Fixture detail line',
     icon: 'icon-trophy',
     verificationUrl: 'https://example.com/verify/fixture',
+    // A verification link and an inline evidence image on the same entry — the combination the
+    // real data does not exercise today, and the one where the two must stay distinguishable.
+    evidence: {
+      src: 'assets/images/fixture-evidence.webp',
+      alt: 'Fixture evidence photograph',
+      width: 800,
+      height: 600,
+    },
   },
   {
     id: 'fixture-cert-minimal',

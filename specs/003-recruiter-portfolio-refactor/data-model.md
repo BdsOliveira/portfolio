@@ -149,9 +149,26 @@ collection is what enforces it today.
 
 ## 5. Carried forward unchanged
 
-`Experience`, `SkillGroup`, `Education`, `Certification` and their content are untouched
-(FR-051, SC-015). Only their **position** in the page order (FR-001) and their visual treatment
-change. Their schemas are unmodified.
+`Experience`, `SkillGroup`, `Education` and their content are untouched (FR-051, SC-015). Only
+their **position** in the page order (FR-001) and their visual treatment change. Their schemas
+are unmodified.
+
+`Certification` keeps its content and gains one optional field, `evidence`, of the new
+`EvidenceImage` composite (`src`, `alt`, `width`, `height` — all four required once `evidence`
+is present):
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `evidence.src` | asset | yes | Self-hosted under `assets/`. Never an external host. |
+| `evidence.alt` | string | yes | The image carries meaning, so it is described, not hidden. |
+| `evidence.width` | integer | yes | Intrinsic pixels. Reserves the box before load (C-8). |
+| `evidence.height` | integer | yes | Intrinsic pixels. |
+
+It exists because two award entries have no issuer record to link to, and `verificationUrl`
+must keep meaning *a third party confirms this*. Evidence is the claimant's own artefact: it is
+shown inline beneath the claim rather than linked, so the reader never leaves the page to see
+three lines' worth of proof, and it is hosted here rather than on a social network, where the
+link would depend on someone else's account, login wall and URL scheme.
 
 ---
 

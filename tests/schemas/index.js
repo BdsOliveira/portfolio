@@ -225,6 +225,35 @@ export const SCHEMAS = {
     },
   },
 
+  /**
+   * A self-hosted artefact shown inline beneath the claim it supports — a photo of the medal,
+   * a scan of the certificate. One composite rather than four loose `evidence*` fields on
+   * Certification: `src` without `alt` is inaccessible and `src` without intrinsic dimensions
+   * shifts the layout as it loads (contract C-8), so all four travel together or not at all.
+   *
+   * `width`/`height` are the image's intrinsic pixel size, not its display size. CSS scales it
+   * down; these only reserve the right box before the bytes arrive.
+   */
+  EvidenceImage: {
+    name: 'EvidenceImage',
+    kind: 'object',
+    fields: {
+      src: { type: 'asset', required: true },
+      alt: { type: 'string', required: true },
+      width: { type: 'integer', required: true },
+      height: { type: 'integer', required: true },
+    },
+  },
+
+  /**
+   * `verificationUrl` and `evidence` are deliberately different things, not two spellings of
+   * one. `verificationUrl` points at the issuer's own record — a third party confirming the
+   * claim, so it is a link that says "Verificar". `evidence` is an artefact authored by the
+   * claimant: it must not borrow that word, and it is shown rather than linked, because a link
+   * out of the page asks the reader to leave in order to see three lines' worth of proof.
+   * Typed `asset`, so evidence lives in this repository, where it cannot rot, move behind a
+   * login, or change under us.
+   */
   Certification: {
     name: 'Certification',
     kind: 'collection',
@@ -235,6 +264,7 @@ export const SCHEMAS = {
       detail: { type: 'string', required: false },
       icon: { type: 'string', required: true },
       verificationUrl: { type: 'url', required: false },
+      evidence: { type: 'object', required: false, of: 'EvidenceImage' },
     },
   },
 

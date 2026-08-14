@@ -489,6 +489,15 @@
   gap: var(--space-md);
 }
 
+/*
+ * `min-width: 0` is load-bearing, not tidying: as a flex item this defaults to `min-width: auto`,
+ * so the evidence photo's 1000px intrinsic width would become the card's minimum and push the
+ * page into horizontal scroll (FR-065, SC-010).
+ */
+.certification__body {
+  min-width: 0;
+}
+
 .certification__badge {
   display: inline-flex;
   align-items: center;
@@ -516,6 +525,20 @@
   align-items: center;
   min-height: var(--touch-target);
   margin-block-start: var(--space-2xs);
+}
+
+/*
+ * The evidence photo sits below the claim, at the body's full width — the card is a single
+ * narrow column, so beside the text there is no width left for a photograph to be readable at.
+ * `height: auto` overrides the intrinsic `height` attribute; the attribute pair still reserves
+ * the aspect ratio while the file loads, so nothing below it jumps (C-8).
+ */
+.certification__evidence {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-block-start: var(--space-xs);
+  border-radius: var(--radius-md);
 }
 
 /* Experience and education ----------------------------------------------- */
