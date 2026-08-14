@@ -170,4 +170,61 @@ describe('data integrity', () => {
       assert.ok(errors.some((error) => error.includes('precedes')));
     });
   });
+
+  /**
+   * These pass today. They are regression guards, not new capability: each one pins a
+   * permissiveness that real CV data depends on and that a well-meaning tightening would
+   * silently remove.
+   */
+  describe('the schemas accept data the CV actually contains', () => {
+    test('accepts an Experience whose startDate is in the future (contract E2-4)', () => {
+      // A confirmed role can begin next month. `maxCurrentYear` is declared only on
+      // Profile.experienceStartYear, and the ordering check skips a null endDate — so this
+      // validates. Adding a future-date rejection here would break a true statement.
+      const errors = validateCollection(
+        [
+          {
+            id: 'probe',
+            company: 'X',
+            title: 'Y',
+            startDate: `${new Date().getFullYear() + 1}-03`,
+            endDate: null,
+          },
+        ],
+        SCHEMAS.Experience,
+        options,
+      );
+      assert.deepEqual(errors, []);
+    });
+
+    test('accepts an Experience without a location', () => {
+      const errors = validateCollection(
+        [{ id: 'probe', company: 'X', title: 'Y', startDate: '2020-01', endDate: null }],
+        SCHEMAS.Experience,
+        options,
+      );
+      assert.deepEqual(errors, []);
+    });
+
+    test('accepts an Education entry with no years at all', () => {
+      // The CV dates neither qualification. Requiring a year would force invented data.
+      const errors = validateCollection(
+        [{ id: 'probe', institution: 'X', qualification: 'Y' }],
+        SCHEMAS.Education,
+        options,
+      );
+      assert.deepEqual(errors, []);
+    });
+
+    test('accepts an Education entry with endYear null and no startYear', () => {
+      // "In progress, start not stated" — the MBA. Distinct from "no years at all", which
+      // means "completed, year not stated".
+      const errors = validateCollection(
+        [{ id: 'probe', institution: 'X', qualification: 'Y', endYear: null }],
+        SCHEMAS.Education,
+        options,
+      );
+      assert.deepEqual(errors, []);
+    });
+  });
 });

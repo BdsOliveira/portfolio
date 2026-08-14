@@ -42,6 +42,15 @@ function item(entry, doc) {
         className: 'timeline__title',
         text: `${entry.title} — ${entry.company}`,
       }),
+      // Location sits above the dates: they are the two facts a visitor scans for, and they
+      // belong together ahead of the prose. Omitted entirely when absent, never rendered empty.
+      entry.location
+        ? el(doc, 'p', {
+            className: 'timeline__location',
+            text: entry.location,
+            attrs: { 'data-location': '' },
+          })
+        : null,
       dateRange(entry, doc),
       entry.summary
         ? el(doc, 'p', {

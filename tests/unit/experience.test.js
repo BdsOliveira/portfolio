@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { renderExperience } from '../../js/components/experience.js';
 import { createDocument, mountFragment, textsOf } from './_setup.js';
-import { experiences, emptyCollection } from '../fixtures/index.js';
+import { experiences, experienceFutureStart, emptyCollection } from '../fixtures/index.js';
 
 const render = (data) => {
   const doc = createDocument();
@@ -51,6 +51,32 @@ describe('renderExperience', () => {
     assert.equal(
       host.querySelectorAll('[data-achievement]').length,
       experiences[0].achievements.length,
+    );
+  });
+
+  test('renders location as its own element when present (contract E2-1)', () => {
+    const host = render([experiences[0]]);
+    const nodes = host.querySelectorAll('[data-location]');
+
+    assert.equal(nodes.length, 1, 'expected exactly one location element');
+    assert.equal(nodes[0].textContent, experiences[0].location);
+  });
+
+  test('omits the location element entirely when absent (contract E2-2)', () => {
+    // Not "renders it empty" — an empty element is a layout artefact and a screen-reader stop.
+    assert.equal(render([experiences[1]]).querySelectorAll('[data-location]').length, 0);
+  });
+
+  test('a start date in the future still renders as a current role (contract E2-4)', () => {
+    // A confirmed role can begin next month. Nothing may hide it, reorder it, or reject it —
+    // renderHero guards a future year for experienceStartYear, and that guard must not spread
+    // to this component.
+    const host = render(experienceFutureStart);
+
+    assert.match(host.textContent, /Atual/);
+    assert.equal(
+      host.querySelector('time').getAttribute('datetime'),
+      experienceFutureStart[0].startDate,
     );
   });
 

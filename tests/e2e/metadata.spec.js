@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+import profile from '../../js/data/profile.js';
+
 /** SEO and link-preview metadata (FR-039–FR-041, SC-009, contract P-10). */
 
 const content = (page, selector) => page.locator(selector).first().getAttribute('content');
@@ -17,8 +19,11 @@ test('the title is unique and descriptive, not a bare name', async ({ page }) =>
   const title = await page.title();
   expect(title.length).toBeGreaterThan(10);
   expect(title.length).toBeLessThan(70);
-  expect(title).toMatch(/Bruno Oliveira/);
-  expect(title).toMatch(/Desenvolvedor|Developer/);
+  // Bound to the data module, not to a literal: the contract is "the title names the owner
+  // and their role", which stays true across every future title change. Hardcoding the role
+  // here is what made this assertion break when the role changed (feature 002, contract T2-3).
+  expect(title).toContain(profile.name);
+  expect(title).toContain(profile.role);
 });
 
 test('the meta description is present and a sensible length', async ({ page }) => {

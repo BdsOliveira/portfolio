@@ -227,6 +227,7 @@
 }
 
 .timeline__dates,
+.timeline__location,
 .timeline__institution {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
@@ -243,6 +244,19 @@
 }
 
 /* Contact ---------------------------------------------------------------- */
+
+.contact-details {
+  display: grid;
+  gap: var(--space-2xs);
+  max-width: var(--measure);
+  margin-block-end: var(--space-md);
+}
+
+.contact-details__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-inline-end: var(--space-2xs);
+}
 
 .contact-form {
   display: grid;

@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bruno Oliveira — Desenvolvedor Fullstack</title>
-    <meta name="description" content="Portfólio de Bruno Oliveira, desenvolvedor fullstack: projetos, habilidades técnicas e certificações. VueJS, Laravel, Node.js e Flutter.">
+    <title>Bruno Oliveira — Software Engineer</title>
+    <meta name="description" content="Portfólio de Bruno Oliveira, Software Engineer com mais de 4 anos de experiência em PHP/Laravel, NestJS, Next.js, APIs REST e sistemas distribuídos.">
     <link rel="canonical" href="https://portfolio-bdsoliveira.vercel.app/">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Bruno Oliveira">
     <meta property="og:locale" content="pt_BR">
     <meta property="og:url" content="https://portfolio-bdsoliveira.vercel.app/">
-    <meta property="og:title" content="Bruno Oliveira — Desenvolvedor Fullstack">
-    <meta property="og:description" content="Portfólio de Bruno Oliveira, desenvolvedor fullstack: projetos, habilidades técnicas e certificações.">
+    <meta property="og:title" content="Bruno Oliveira — Software Engineer">
+    <meta property="og:description" content="Portfólio de Bruno Oliveira, Software Engineer: experiência profissional, habilidades técnicas, formação e certificações.">
     <meta property="og:image" content="https://portfolio-bdsoliveira.vercel.app/assets/images/og-card.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Bruno Oliveira, Desenvolvedor Fullstack">
+    <meta property="og:image:alt" content="Bruno Oliveira, Software Engineer">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Bruno Oliveira — Desenvolvedor Fullstack">
-    <meta name="twitter:description" content="Portfólio de Bruno Oliveira, desenvolvedor fullstack: projetos, habilidades técnicas e certificações.">
+    <meta name="twitter:title" content="Bruno Oliveira — Software Engineer">
+    <meta name="twitter:description" content="Portfólio de Bruno Oliveira, Software Engineer: experiência profissional, habilidades técnicas, formação e certificações.">
     <meta name="twitter:image" content="https://portfolio-bdsoliveira.vercel.app/assets/images/og-card.png">
 
     <!-- Body weight only: preloading both would compete with the text it is meant to speed up. -->
@@ -88,10 +88,10 @@
             <div class="hero__intro">
                 <h1 class="hero__name" data-profile="name">Bruno Oliveira</h1>
                 <p class="hero__lede">
-                    <span data-profile="role">Desenvolvedor Fullstack</span>
+                    <span data-profile="role">Software Engineer</span>
                     com +<span id="years-of-experience">4</span> anos de experiência
                 </p>
-                <p class="hero__summary" data-profile="summary">Criando soluções robustas e escaláveis.</p>
+                <p class="hero__summary" data-profile="summary">Especializado em PHP/Laravel, APIs REST e sistemas distribuídos, com foco em arquitetura de software e IA aplicada.</p>
                 <!-- An anchor, not a button: it navigates. The pre-migration control was a
                      <button> with no behaviour at all (FR-028, contract C-10). -->
                 <a class="button hero__cta" href="#contact">Vamos conversar</a>
@@ -147,6 +147,24 @@
 
         <section id="contact" class="section" aria-labelledby="contact-heading">
             <h2 id="contact-heading" class="section__heading">Entre em Contato</h2>
+            <!--
+              Static contact details, not rendered by JavaScript: primary contact must survive a
+              script failure (constitution IV). js/data/profile.js is the source of truth and
+              tests/data/sync.test.js fails if these strings drift from it.
+
+              The email anchor's visible text IS the address, which gives it a descriptive
+              accessible name without a separate label.
+            -->
+            <ul class="contact-details">
+                <li class="contact-details__item">
+                    <span class="contact-details__label">Localização</span>
+                    <span data-profile="location">Parnaíba, PI – Brasil</span>
+                </li>
+                <li class="contact-details__item">
+                    <span class="contact-details__label">Email</span>
+                    <a class="inline-link" href="mailto:bds.commus@gmail.com" data-profile="email">bds.commus@gmail.com</a>
+                </li>
+            </ul>
             <!-- Every field has a persistent <label>. Placeholders are supplementary and are
                  never the only identifier (FR-027, contract P-6). -->
             <form class="contact-form">

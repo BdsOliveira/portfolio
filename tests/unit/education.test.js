@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { renderEducation } from '../../js/components/education.js';
 import { createDocument, mountFragment, textsOf } from './_setup.js';
-import { education, emptyCollection } from '../fixtures/index.js';
+import { education, educationDateCases, emptyCollection } from '../fixtures/index.js';
 
 const render = (data) => {
   const doc = createDocument();
@@ -38,6 +38,43 @@ describe('renderEducation', () => {
   test('omits field when absent — never an empty node', () => {
     assert.equal(render([education[1]]).querySelectorAll('[data-field]').length, 0);
     assert.equal(render([education[0]]).querySelectorAll('[data-field]').length, 1);
+  });
+
+  describe('the five date cases (contract D2-2)', () => {
+    const [startOnly, ongoingUndated, undated] = educationDateCases;
+    const datesOf = (entry) => {
+      const node = render([entry]).querySelector('[data-dates]');
+      return node === null ? null : node.textContent.replace(/\s+/g, ' ').trim();
+    };
+
+    test('both years → "start – end"', () => {
+      assert.equal(datesOf(education[0]), '2015 – 2019');
+    });
+
+    test('start year with endYear null → "start – Em andamento"', () => {
+      assert.equal(datesOf(education[1]), '2024 – Em andamento');
+    });
+
+    test('start year with no endYear → "Desde start"', () => {
+      assert.equal(datesOf(startOnly), 'Desde 2018');
+    });
+
+    test('no start year with endYear null → "Em andamento" alone', () => {
+      assert.equal(datesOf(ongoingUndated), 'Em andamento');
+    });
+
+    test('neither year → no date element at all', () => {
+      // Not an empty element, not a stray separator. A completed qualification whose year was
+      // never recorded must not be announced as still in progress.
+      assert.equal(datesOf(undated), null);
+      assert.doesNotMatch(render([undated]).textContent, /Em andamento|–/);
+    });
+
+    test('an entry with no years still renders its institution and qualification', () => {
+      const host = render([undated]);
+      assert.match(host.textContent, new RegExp(undated.institution));
+      assert.match(host.textContent, new RegExp(undated.qualification));
+    });
   });
 
   test('returns null for the empty collection it ships with', () => {

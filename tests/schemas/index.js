@@ -128,6 +128,10 @@ export const SCHEMAS = {
       id: { type: 'id', required: true },
       company: { type: 'string', required: true },
       title: { type: 'string', required: true },
+      // Work-location context: city, region/country, and remote vs on-site. A dedicated field
+      // rather than prose inside `summary` — remote-vs-on-site is what a recruiter filters on,
+      // so it has to be addressable (FR-008).
+      location: { type: 'string', required: false },
       startDate: { type: 'year-month', required: true },
       endDate: { type: 'year-month', required: true, nullable: true },
       summary: { type: 'string', required: false },
@@ -143,8 +147,14 @@ export const SCHEMAS = {
       institution: { type: 'string', required: true },
       qualification: { type: 'string', required: true },
       field: { type: 'string', required: false },
-      startYear: { type: 'integer', required: true },
-      endYear: { type: 'integer', required: true, nullable: true },
+      // Both years optional. `endYear` is three-state and the distinction is load-bearing:
+      //   absent  → the CV does not state it        → no date rendered
+      //   null    → in progress                     → "Em andamento"
+      //   integer → completed in that year          → the year
+      // Collapsing "unknown" into null would render a completed course as still in progress —
+      // the schema would compel a false statement about the owner.
+      startYear: { type: 'integer', required: false },
+      endYear: { type: 'integer', required: false, nullable: true },
     },
   },
 };

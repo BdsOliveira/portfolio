@@ -78,10 +78,18 @@ test('every section is labelled by its own heading', async ({ page }) => {
 test('empty collections leave no empty section behind (SC-014)', async ({ page }) => {
   await page.goto('/');
 
-  // experiences.js and education.js ship empty, so their sections must be gone entirely —
-  // not present-but-empty, which would leave a stray heading and a gap.
-  await expect(page.locator('#experience')).toHaveCount(0);
-  await expect(page.locator('#education')).toHaveCount(0);
+  // A section whose collection is empty must be removed entirely, not left present-but-empty,
+  // which would leave a stray heading with a gap under it.
+  //
+  // Asserted against the mechanism rather than against which collections happen to ship empty.
+  // The original form named #experience and #education directly, because feature 001 shipped
+  // those two data files empty; feature 002 populates them, which would make a data-bound
+  // assertion here fail for the wrong reason every time content changes.
+  const stray = await page.$$eval('main > section [data-mount]', (mounts) =>
+    mounts.filter((mount) => mount.children.length === 0).map((mount) => mount.dataset.mount),
+  );
+
+  expect(stray, `sections rendered with an empty body: ${stray.join(', ')}`).toEqual([]);
 });
 
 test('repeated items are announced as lists (FR-023, C-12)', async ({ page }) => {

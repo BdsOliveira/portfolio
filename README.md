@@ -18,9 +18,25 @@ reload the page, done — no markup to touch, no logic to change, nothing to reb
 | Projects | `js/data/projects.js` | Copy an entry, change the values |
 | Skills | `js/data/skills.js` | Add a string to a group's `skills`, or add a group |
 | Certifications | `js/data/certifications.js` | `icon` names a symbol in the sprite |
-| Work experience | `js/data/experiences.js` | Ships empty; the section appears when you add one |
-| Education | `js/data/education.js` | Ships empty; same behaviour |
-| Name, role, summary, social links | `js/data/profile.js` **and** `index.html` | See "The one duplication" below |
+| Work experience | `js/data/experiences.js` | Newest first — array order is display order. `endDate: null` renders "Atual" |
+| Education | `js/data/education.js` | Both years optional; see "Education dates" below |
+| Name, role, summary, location, email, social links | `js/data/profile.js` **and** `index.html` | See "The one duplication" below |
+
+A section whose collection is empty is removed from the page entirely, so emptying an array is
+how you hide a section — no markup change.
+
+### Education dates
+
+`endYear` has three distinct meanings, and they are not interchangeable:
+
+| `endYear` | Means | Renders |
+|-----------|-------|---------|
+| absent | the end is not recorded | nothing |
+| `null` | still in progress | `Em andamento` |
+| a year | completed then | the year |
+
+Writing `endYear: null` for a course that finished but whose year you do not have would
+announce it as still in progress. Leave the field out instead.
 
 ### Adding a project
 
@@ -56,11 +72,17 @@ reason. Add one entry and the section appears, correctly themed, with no code ch
 
 ### The one duplication
 
-`name`, `role` and `summary` appear both in `js/data/profile.js` and as static text in
-`index.html`. That is deliberate: a visitor whose JavaScript fails, and a crawler that never
-runs one, must still get the owner's identity. Holding a string twice is only honest if drift
-is a caught error, so `tests/data/sync.test.js` fails the moment the two disagree. **Change
-both, or the tests will tell you.**
+`name`, `role`, `summary`, `location` and `email` appear both in `js/data/profile.js` and as
+static text in `index.html`, as do the social links. That is deliberate: a visitor whose
+JavaScript fails, and a crawler that never runs one, must still get the owner's identity and a
+way to make contact. Holding a string twice is only honest if drift is a caught error, so
+`tests/data/sync.test.js` fails the moment the two disagree. **Change both, or the tests will
+tell you.**
+
+One thing is deliberately absent from both: the owner's phone number. A static page is scraped
+continuously and a number published once cannot be recalled, so contact runs through email,
+LinkedIn, GitHub and the form. `tests/data/parity.test.js` asserts the number appears in no
+shipped file.
 
 ---
 

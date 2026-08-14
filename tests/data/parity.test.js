@@ -1,16 +1,26 @@
 /**
- * Content parity (SC-002, US2).
+ * Content parity (feature 002: SC-001, SC-002, FR-026).
  *
- * The one suite in this project that is deliberately bound to content values: it exists to
- * prove the migration lost nothing. The reference is
- * specs/001-data-driven-migration/content-inventory.md, captured from the pre-migration page.
+ * The one suite in this project that is deliberately bound to content *values*. Every other
+ * suite binds to contracts, and tests/data/independence.test.js enforces that — exempting this
+ * file **by filename**. Renaming it silently removes the exemption and breaks that suite, so
+ * the name `parity.test.js` is load-bearing. Leave it alone.
  *
- * Excluded from the content-independence check (tests/data/independence.test.js) for exactly
- * that reason — every other suite binds to contracts instead.
+ * Reference document: specs/002-cv-content-update/content-inventory.md.
+ *
+ * That reference is what makes "every statement on the page traces to the CV" (FR-026) a
+ * mechanical check rather than an opinion: a string on the page and not in the inventory fails
+ * here, and so does a string in the inventory and not on the page.
+ *
+ * History: this suite was written for feature 001, where it proved the data-driven migration
+ * lost none of the pre-migration page's content, against
+ * specs/001-data-driven-migration/content-inventory.md. Feature 002 replaced that content
+ * wholesale with the owner's CV, so the reference moved. The purpose did not.
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseHTML } from 'linkedom';
 
@@ -31,28 +41,69 @@ const SECTION_HEADINGS = [
   'Habilidades Técnicas',
   'Projetos Recentes',
   'Certificações',
+  // Experiência and Formação render for the first time in feature 002: their collections
+  // shipped empty, so app.js removed both sections outright.
+  'Experiência',
+  'Formação',
   'Entre em Contato',
 ];
 
 const NAV_LABELS = ['Home', 'Skills', 'Projetos', 'Certificações', 'Contato'];
 
+// content-inventory.md §1
 const IDENTITY = [
   'Bruno Oliveira',
-  'Desenvolvedor Fullstack',
+  'Software Engineer',
   'anos de experiência',
-  'soluções robustas e escaláveis',
+  'Especializado em PHP/Laravel, APIs REST e sistemas distribuídos',
 ];
 
-const SKILL_GROUPS = ['Frontend', 'Backend', 'Bancos de Dados', 'Ferramentas', 'Mobile'];
+// content-inventory.md §4 — the CV's COMPETÊNCIAS line, grouped.
+const SKILL_GROUPS = [
+  'Backend',
+  'Frontend',
+  'Bancos de Dados',
+  'Infraestrutura e DevOps',
+  'Arquitetura e Integração',
+  'Práticas',
+];
 
 const SKILL_TAGS = [
-  'VueJS', 'NuxtJS', 'Tailwind', 'JavaScript', 'Vite', 'Vuetify',
-  'PHP', 'Laravel', 'Node.js',
-  'SQL', 'MySQL', 'MongoDB', 'Indexação de Dados', 'Análise de Dados',
-  'Docker', 'Git', 'GitHub Actions', 'Postman', 'Insomnia',
-  'Flutter', 'BLOC',
+  'PHP', 'Laravel', 'NestJS',
+  'Next.js', 'Vue.js', 'React',
+  'Oracle Database', 'MySQL', 'Redis',
+  'Docker', 'RabbitMQ', 'GitLab CI/CD',
+  'Arquitetura de Software', 'Microsserviços', 'APIs REST', 'Mensageria', 'Integração entre Sistemas',
+  'Desenvolvimento Full Stack', 'Engenharia de Software Assistida por IA',
 ];
 
+/**
+ * Technologies the CV drops. Asserted absent, not merely un-asserted — a stale stack is a
+ * false claim about the owner, and "we forgot to remove it" looks identical to "we still
+ * claim it" from the reader's side.
+ *
+ * Excludes anything that is a substring of a surviving string ("Git" is inside "GitLab CI/CD",
+ * "SQL" is inside "MySQL"), which a page-text scan cannot distinguish.
+ */
+const REMOVED_SKILLS = [
+  'NuxtJS', 'Vuetify', 'Vite', 'MongoDB', 'Insomnia', 'Postman', 'Flutter', 'BLOC',
+  'GitHub Actions', 'Indexação de Dados', 'Análise de Dados', 'Mobile',
+];
+
+/**
+ * ⚠ WHITELISTED EXCEPTION — do not "clean this up".
+ *
+ * These two strings are the only content on the page that does NOT trace to the CV. They are a
+ * placeholder project carried over from before the data-driven migration, and the owner
+ * decided to keep them rather than delay the CV update on sourcing real project content
+ * (spec 002 Accepted exceptions, E-1; FR-025).
+ *
+ * They are asserted *present* on purpose. Deleting these assertions because "the CV has no
+ * projects" removes the only signal that would notice the placeholder quietly disappearing —
+ * or quietly staying forever.
+ *
+ * When real projects land, replace this list with them and delete this comment.
+ */
 const PROJECT_CONTENT = [
   'Plataforma E-commerce',
   'Solução completa com carrinho, pagamentos e painel administrativo',
@@ -65,16 +116,60 @@ const CERTIFICATION_CONTENT = [
   'Score 49/100 (B1 Intermediate)',
 ];
 
+// content-inventory.md §2. Employers, titles, locations and rendered periods; the achievement
+// bullets are asserted separately below because there are 14 of them.
+const EXPERIENCE_CONTENT = [
+  'CWI Software',
+  'São Leopoldo, RS – Brasil · Remoto',
+  'DevSquad',
+  'Utah, EUA · Remoto',
+  'CajuTec',
+  'Software Engineer / Tech Lead',
+  'Parnaíba, PI – Brasil · Presencial',
+];
+
+const EXPERIENCE_ACHIEVEMENTS = [
+  // CWI Software
+  "Atuação na evolução de uma plataforma de oncologia utilizada pela Rede D'Or",
+  'migrando a arquitetura de Symfony (PHP) e Angular para NestJS e Next.js',
+  'correção de bugs, refatoração de código e Code Review',
+  'integrações entre serviços utilizando RabbitMQ',
+  'Docker, Redis e Oracle Database',
+  // DevSquad
+  'produtos internos e soluções para clientes internacionais',
+  'APIs REST, arquiteturas orientadas a serviços',
+  'plataforma de gerenciamento de infraestrutura para aluguel de GPUs',
+  'decisões de arquitetura, modelagem de sistemas',
+  'Claude Code, OpenCode e Specification-Driven Development (SDD)',
+  // CajuTec
+  'plataforma de gestão acadêmica utilizada por diversas instituições de ensino',
+  'Implementação do Sentry para monitoramento de erros',
+  'processos de deploy, infraestrutura e configuração de servidores',
+  'mentoria de desenvolvedores Laravel',
+];
+
 const CONTACT_FIELDS = ['Nome', 'Email', 'Mensagem', 'Enviar Mensagem'];
+
+// content-inventory.md §1 — published contact routes. The phone number is deliberately absent
+// and is asserted absent by the suite at the bottom of this file.
+const CONTACT_DETAILS = ['Parnaíba, PI – Brasil', 'bds.commus@gmail.com'];
 
 const LINK_DESTINATIONS = [
   'https://github.com/BdsOliveira',
   'https://www.linkedin.com/in/bruno-oliveira/',
 ];
 
-const SECTION_IDS = ['#hero', '#skills', '#projects', '#certifications', '#contact'];
+const SECTION_IDS = [
+  '#hero',
+  '#skills',
+  '#projects',
+  '#certifications',
+  '#experience',
+  '#education',
+  '#contact',
+];
 
-describe('content parity with the pre-migration page', () => {
+describe('the page states what the CV states', () => {
   const cases = [
     ['section headings', SECTION_HEADINGS],
     ['navigation labels', NAV_LABELS],
@@ -83,7 +178,10 @@ describe('content parity with the pre-migration page', () => {
     ['skill tags', SKILL_TAGS],
     ['project content', PROJECT_CONTENT],
     ['certification content', CERTIFICATION_CONTENT],
+    ['experience content', EXPERIENCE_CONTENT],
+    ['experience achievements', EXPERIENCE_ACHIEVEMENTS],
     ['contact form fields', CONTACT_FIELDS],
+    ['contact details', CONTACT_DETAILS],
   ];
 
   for (const [label, values] of cases) {
@@ -104,14 +202,106 @@ describe('content parity with the pre-migration page', () => {
     assert.deepEqual(missing, []);
   });
 
-  test('all 21 skill tags render as distinct chips', () => {
+  test('the email is reachable in one click', () => {
+    const hrefs = [...doc.querySelectorAll('a[href]')].map((a) => a.getAttribute('href'));
+    assert.ok(hrefs.includes('mailto:bds.commus@gmail.com'));
+  });
+
+  // Exact count and exact set, deliberately: this pair is what catches a skill silently
+  // dropped while regrouping the CV's flat list into cards.
+  test('all 19 skill tags render as distinct chips', () => {
     const chips = [...doc.querySelectorAll('[data-skill]')].map((chip) => chip.textContent.trim());
     assert.equal(chips.length, SKILL_TAGS.length);
     assert.deepEqual([...chips].sort(), [...SKILL_TAGS].sort());
   });
 
+  test('technologies the CV no longer lists are gone', () => {
+    const chips = new Set(
+      [...doc.querySelectorAll('[data-skill]')].map((chip) => chip.textContent.trim()),
+    );
+    const groups = new Set(
+      [...doc.querySelectorAll('[data-skill-group]')].map((group) =>
+        group.querySelector('h3').textContent.trim(),
+      ),
+    );
+
+    const survivors = REMOVED_SKILLS.filter((name) => chips.has(name) || groups.has(name));
+    assert.deepEqual(survivors, [], 'a superseded technology is still advertised as current');
+  });
+
   test('the footer copyright survives', () => {
     assert.ok(present('Bruno Oliveira. Todos os direitos reservados.'));
+  });
+
+  describe('experience', () => {
+    const items = [...doc.querySelectorAll('[data-experience]')];
+
+    test('all three roles render, newest first', () => {
+      assert.deepEqual(
+        items.map((item) => item.getAttribute('data-experience')),
+        ['cwi-software', 'devsquad', 'cajutec'],
+      );
+    });
+
+    test('the ongoing role reads "Atual" and the closed ones do not', () => {
+      assert.match(items[0].textContent, /Atual/);
+      assert.doesNotMatch(items[1].textContent, /Atual/);
+      assert.doesNotMatch(items[2].textContent, /Atual/);
+    });
+
+    test('every role states its work-location context', () => {
+      const missing = items.filter((item) => !item.querySelector('[data-location]'));
+      assert.deepEqual(missing.map((item) => item.getAttribute('data-experience')), []);
+    });
+
+    test('the periods render as the CV states them', () => {
+      const dates = items.map((item) => normalize(item.querySelector('.timeline__dates').textContent));
+
+      assert.match(dates[0], /09\/2026 – atual/);
+      assert.match(dates[1], /11\/2025 – 07\/2026/);
+      assert.match(dates[2], /10\/2022 – 09\/2025/);
+    });
+
+    test('all 14 achievement bullets render', () => {
+      assert.equal(doc.querySelectorAll('[data-achievement]').length, 14);
+    });
+  });
+
+  describe('education', () => {
+    const items = [...doc.querySelectorAll('[data-education]')];
+
+    test('both academic entries render', () => {
+      assert.deepEqual(
+        items.map((item) => item.getAttribute('data-education')),
+        ['mba-engenharia-software-ia', 'tecnico-desenvolvimento-software'],
+      );
+    });
+
+    test('both institutions and qualifications are stated', () => {
+      for (const value of [
+        'Faculdade Full Cycle',
+        'MBA em Engenharia de Software com Inteligência Artificial',
+        'Instituto Federal do Piauí (IFPI)',
+        'Técnico em Desenvolvimento de Software',
+      ]) {
+        assert.ok(present(value), `${value} is missing from the page`);
+      }
+    });
+
+    test('the in-progress MBA is marked as such', () => {
+      assert.match(items[0].textContent, /Em andamento/);
+    });
+
+    test('the undated completed course renders no date and no false progress claim', () => {
+      // The CV states no year for it, so the page states no year — and must not imply the
+      // course is still running just because its end year is unknown.
+      assert.equal(items[1].querySelector('[data-dates]'), null);
+      assert.doesNotMatch(items[1].textContent, /Em andamento/);
+    });
+
+    test('no year is invented for either entry', () => {
+      for (const item of items) assert.doesNotMatch(item.textContent, /\b(19|20)\d{2}\b/);
+    });
   });
 
   describe('deliberate removals', () => {
@@ -149,5 +339,58 @@ describe('content parity with the pre-migration page', () => {
       );
       assert.deepEqual(utilities, []);
     });
+  });
+});
+
+/**
+ * Content that must never be published (FR-023, data-model validation rule 11).
+ *
+ * The owner's CV carries a personal mobile number. The owner decided it stays off the public
+ * page: a static page is scraped continuously, and a number published once cannot be recalled.
+ *
+ * This is asserted rather than remembered. A published phone number is not the kind of mistake
+ * that can be undone by a later commit, so the guard is mechanical and covers both the rendered
+ * page and every shipped file — including places a rendered-text check would never look, such
+ * as an HTML comment, a data module, or a CSS content string.
+ */
+describe('the phone number is published nowhere', () => {
+  // Digits only: matches "99806-3078", "998063078", "+55 86 99806-3078" and every other
+  // formatting, because it looks at the part that does not change.
+  const PHONE_FRAGMENT = '99806';
+
+  /** Directories whose contents reach a visitor. */
+  const SHIPPED_DIRS = ['assets', 'css', 'js'];
+
+  function walk(dir) {
+    const found = [];
+    for (const name of readdirSync(dir)) {
+      const full = join(dir, name);
+      if (statSync(full).isDirectory()) found.push(...walk(full));
+      else found.push(full);
+    }
+    return found;
+  }
+
+  test('it is absent from the rendered page', () => {
+    assert.ok(
+      !text.includes(PHONE_FRAGMENT),
+      'the phone number reached the rendered page (FR-023)',
+    );
+  });
+
+  test('it is absent from every shipped file', () => {
+    const offenders = [];
+
+    for (const file of [join(REPO_ROOT, 'index.html'), ...SHIPPED_DIRS.flatMap((dir) => walk(join(REPO_ROOT, dir)))]) {
+      let source;
+      try {
+        source = readFileSync(file, 'utf8');
+      } catch {
+        continue; // binary asset (font, image) — nothing to read as text
+      }
+      if (source.includes(PHONE_FRAGMENT)) offenders.push(relative(REPO_ROOT, file));
+    }
+
+    assert.deepEqual(offenders, [], 'the phone number is present in a file the site ships');
   });
 });

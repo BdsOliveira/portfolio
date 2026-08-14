@@ -149,16 +149,35 @@ export const experiences = [
     id: 'fixture-job-past',
     company: 'Fixture Corp',
     title: 'Fixture Engineer',
+    location: 'Fixture Town, FX · Remoto',
     startDate: '2020-01',
     endDate: '2022-06',
     summary: 'Fixture summary.',
     achievements: ['Fixture achievement one', 'Fixture achievement two'],
   },
   {
+    // No `location` — proves the field is genuinely optional (contract E2-2).
     id: 'fixture-job-current',
     company: 'Fixture Labs',
     title: 'Senior Fixture Engineer',
     startDate: '2022-07',
+    endDate: null,
+  },
+];
+
+/**
+ * A role that starts after today and has not ended (contract E2-4).
+ *
+ * Derived from the current date rather than a literal so it never quietly becomes a past date
+ * and stops testing what it was written to test.
+ */
+export const experienceFutureStart = [
+  {
+    id: 'fixture-job-future',
+    company: 'Fixture Futures',
+    title: 'Incoming Fixture Engineer',
+    location: 'Fixture Bay, FX · Presencial',
+    startDate: `${new Date().getFullYear() + 1}-03`,
     endDate: null,
   },
 ];
@@ -178,6 +197,35 @@ export const education = [
     qualification: 'Pós-graduação em Fixture',
     startYear: 2024,
     endYear: null,
+  },
+];
+
+/**
+ * The remaining date cases from contract D2-2, which `education` above does not reach.
+ *
+ * The fourth is the one that matters: a completed qualification whose years were never
+ * recorded must render no date at all. Rendering it as "Em andamento" would be a false
+ * statement, and that is exactly what collapsing "unknown" into null produces.
+ */
+export const educationDateCases = [
+  {
+    id: 'fixture-degree-start-only',
+    institution: 'Fixture Polytechnic',
+    qualification: 'Curso de Fixture',
+    startYear: 2018,
+    // no endYear at all — started, end not recorded
+  },
+  {
+    id: 'fixture-degree-ongoing-undated',
+    institution: 'Fixture Academy',
+    qualification: 'Especialização em Fixture',
+    endYear: null, // in progress, start not recorded
+  },
+  {
+    id: 'fixture-degree-undated',
+    institution: 'Fixture College',
+    qualification: 'Técnico em Fixture',
+    // neither year — completed, nothing recorded
   },
 ];
 

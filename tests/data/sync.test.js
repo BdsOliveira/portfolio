@@ -20,7 +20,10 @@ const doc = parseHTML(html).document;
 const staticValue = (field) => doc.querySelector(`[data-profile="${field}"]`)?.textContent.trim();
 
 describe('static HTML matches js/data/profile.js', () => {
-  for (const field of ['name', 'role', 'summary']) {
+  // location and email joined this list in feature 002: primary contact must survive a script
+  // failure, so it is authored in the document — which means it can drift, which means it
+  // needs this check.
+  for (const field of ['name', 'role', 'summary', 'location', 'email']) {
     test(`${field} matches exactly`, () => {
       const inHtml = staticValue(field);
 
@@ -32,6 +35,23 @@ describe('static HTML matches js/data/profile.js', () => {
       );
     });
   }
+
+  test('the email is an actionable mailto: link, not just text', () => {
+    const anchor = doc.querySelector('a[data-profile="email"]');
+
+    assert.ok(anchor, 'index.html has no email anchor');
+    assert.equal(anchor.getAttribute('href'), `mailto:${profile.email}`);
+    assert.equal(
+      anchor.textContent.trim(),
+      profile.email,
+      'the link text must be the address itself, so its accessible name is descriptive',
+    );
+  });
+
+  test('the phone number is not published alongside the email', () => {
+    // FR-023. The email being static made it tempting to add the phone the same way.
+    assert.ok(!html.includes('99806'), 'the phone number reached index.html');
+  });
 
   test('every social link in profile.js is present in the served HTML', () => {
     const hrefs = [...doc.querySelectorAll('a[href]')].map((a) => a.getAttribute('href'));
