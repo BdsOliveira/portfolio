@@ -1,0 +1,215 @@
+/*
+ * Reset, self-hosted webfonts, element defaults, typography.
+ * Every value comes from css/variables.css (contract S-1).
+ */
+
+/*
+ * Poppins, self-hosted (research R4). SIL Open Font License — redistribution permitted.
+ * Two weights only; unused weights are not shipped (constitution VII).
+ * Split latin / latin-ext by unicode-range so the extended file is fetched only when a
+ * glyph outside Latin-1 actually appears. Portuguese diacritics live in the latin file.
+ */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/poppins-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/poppins-400-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/poppins-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/poppins-600-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+/*
+ * The `hidden` attribute is load-bearing in this project, not a convenience.
+ *
+ * Every data-driven section and every navigation item bound to one ships `hidden`, and js/app.js
+ * reveals it only once its component has produced content (research R1). That is what makes
+ * "an empty collection leaves no trace" true for a visitor whose script never runs (FR-003,
+ * FR-074).
+ *
+ * The UA stylesheet already does this — but any author `display` declaration on one of those
+ * elements would silently override it, breaking the guarantee for exactly the visitors who
+ * cannot report it. Pinned here so that cannot happen by accident.
+ */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+  /*
+   * The sticky header must not cover the section a hash link jumps to. Shares one token with
+   * the sticky section heading (sections.css) rather than carrying a second guess at the
+   * header's height that would drift away from the first.
+   */
+  scroll-padding-top: var(--anchor-offset);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  /*
+   * A single word longer than its container is the standard cause of horizontal page scroll, and
+   * portfolio content is full of candidates: URLs, package names, "Specification-Driven
+   * Development". Set once here rather than per-component, so a section added later inherits the
+   * guarantee instead of re-discovering the defect (FR-065, SC-011).
+   */
+  overflow-wrap: break-word;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Element defaults */
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-heading);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+/*
+ * Optical tightening. Poppins is a geometric sans, and at display sizes its default tracking
+ * reads loose — the larger the size, the more negative tracking it wants. Applied by step, not
+ * globally: body copy at 16px needs the default and is harmed by tightening (P-6, letter-spacing).
+ */
+h1 {
+  font-size: var(--text-3xl);
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-size: var(--text-xl);
+  letter-spacing: -0.01em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/*
+ * Global focus indicator (contract S-5, P-7). Never removed anywhere — if a component
+ * restyles focus it must replace this with something at least as visible.
+ */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* Reduced motion (contract P-12, FR-032) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Belt and braces: the card lift is a transform, not a transition, on hover. */
+  .card:hover,
+  .project-card:hover {
+    transform: none !important;
+  }
+}
