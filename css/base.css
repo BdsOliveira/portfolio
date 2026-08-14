@@ -82,8 +82,12 @@
 
 html {
   scroll-behavior: smooth;
-  /* The fixed header must not cover the section a hash link jumps to. */
-  scroll-padding-top: var(--space-3xl);
+  /*
+   * The sticky header must not cover the section a hash link jumps to. Shares one token with
+   * the sticky section heading (sections.css) rather than carrying a second guess at the
+   * header's height that would drift away from the first.
+   */
+  scroll-padding-top: var(--anchor-offset);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -143,16 +147,24 @@ h4 {
   text-wrap: balance;
 }
 
+/*
+ * Optical tightening. Poppins is a geometric sans, and at display sizes its default tracking
+ * reads loose — the larger the size, the more negative tracking it wants. Applied by step, not
+ * globally: body copy at 16px needs the default and is harmed by tightening (P-6, letter-spacing).
+ */
 h1 {
   font-size: var(--text-3xl);
+  letter-spacing: -0.025em;
 }
 
 h2 {
   font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
 }
 
 h3 {
   font-size: var(--text-xl);
+  letter-spacing: -0.01em;
 }
 
 p {

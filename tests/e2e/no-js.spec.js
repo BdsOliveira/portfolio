@@ -65,8 +65,8 @@ test('availability is stated when the profile states one (FR-013)', async ({ pag
  *
  * The original form asserted `toHaveCount(1)` per social URL, and failed — not on a defect, but
  * on an assumption of uniqueness the page never promised. Two destinations are reachable from
- * two places on purpose: GitHub from the Hero's secondary call to action and from the social
- * list, LinkedIn from the social list and from the contact routes.
+ * two places on purpose: GitHub from the Hero's secondary call to action and from the contact
+ * routes, LinkedIn from the Hero's social list and from the contact routes.
  *
  * So assert the properties that actually matter: the destination is reachable, and *every* route
  * to it names where it goes (FR-059).
@@ -180,13 +180,16 @@ test('the closing section states what the owner is open to (FR-039, FR-040)', as
     await expect(contact.locator('[data-profile="availability"]')).toHaveText(profile.availability);
   }
 
-  // Email, LinkedIn and GitHub as distinct routes, each named so it identifies its destination.
+  // LinkedIn and GitHub as distinct routes, each named so it identifies its destination.
   const routes = contact.locator('.contact-routes a');
-  await expect(routes).toHaveCount(3);
+  await expect(routes).toHaveCount(2);
 
   const hrefs = await routes.evaluateAll((links) => links.map((l) => l.getAttribute('href')));
-  expect(hrefs).toContain(`mailto:${profile.email}`);
   for (const link of profile.socialLinks) expect(hrefs).toContain(link.url);
+
+  // The email button is gone by the owner's decision, but email must still be a working route
+  // without a script: the address in the contact details is the live mailto anchor (FR-040).
+  await expect(contact.locator(`a[href="mailto:${profile.email}"]`)).toHaveCount(1);
 
   for (const [index, name] of (
     await routes.evaluateAll((links) =>

@@ -18,10 +18,9 @@ export default {
   summary:
     'Especializado em PHP/Laravel, APIs REST e sistemas distribuídos, com foco em arquitetura de software e IA aplicada.',
 
-  // Stated as what the owner is open to, so the Hero and the closing call to action can both
-  // answer it without the visitor having to ask (FR-013, FR-039). Absent would be legitimate —
-  // the Hero renders nothing in its place rather than a placeholder.
-  availability: 'Aberto a oportunidades remotas',
+  // No `availability` by the owner's decision. The field stays optional by contract (FR-013,
+  // FR-039): adding it back here is all it takes, plus re-authoring the two static mirrors in
+  // index.html that the Hero and the closing call to action used to carry.
 
   /**
    * About, one entry per paragraph (FR-015 – FR-017). Read time under thirty seconds; this is
@@ -73,7 +72,7 @@ export default {
       platform: 'LinkedIn',
       url: 'https://www.linkedin.com/in/bruno-oliveira/',
       icon: 'icon-linkedin',
-      label: 'Bruno Oliveira no LinkedIn',
+      label: 'Ver no LinkedIn',
     },
   ],
 };

@@ -175,7 +175,10 @@ const EXPERIENCE_ACHIEVEMENTS = [
   'mentoria de desenvolvedores Laravel',
 ];
 
-const CONTACT_FIELDS = ['Nome', 'Email', 'Mensagem', 'Enviar Mensagem'];
+// The contact form was removed by the owner's decision: there is no backend to submit to, and
+// the contact routes are the only contact paths. These strings must stay off the page — a form
+// that posts nowhere is a dead end for a recruiter, worse than no form at all.
+const REMOVED_FORM_CONTENT = ['Nome', 'Mensagem', 'Enviar Mensagem'];
 
 // content-inventory.md §1 — published contact routes. The phone number is deliberately absent
 // and is asserted absent by the suite at the bottom of this file.
@@ -211,7 +214,6 @@ describe('the page states what the CV states', () => {
     ['certification content', CERTIFICATION_CONTENT],
     ['experience content', EXPERIENCE_CONTENT],
     ['experience achievements', EXPERIENCE_ACHIEVEMENTS],
-    ['contact form fields', CONTACT_FIELDS],
     ['contact details', CONTACT_DETAILS],
   ];
 
@@ -221,6 +223,13 @@ describe('the page states what the CV states', () => {
       assert.deepEqual(missing, [], `${label} lost in migration`);
     });
   }
+
+  test('the contact form is gone and stays gone', () => {
+    const survivors = REMOVED_FORM_CONTENT.filter((value) => present(value));
+
+    assert.deepEqual(survivors, [], 'the contact form is back on the page');
+    assert.equal(doc.querySelector('form'), null, 'the page has a <form> again');
+  });
 
   test('the placeholder project is gone and stays gone (FR-024)', () => {
     const survivors = REMOVED_PLACEHOLDER_CONTENT.filter((value) => present(value));

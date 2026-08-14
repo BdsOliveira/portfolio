@@ -23,10 +23,14 @@ describe('static HTML matches js/data/profile.js', () => {
   // location and email joined this list in feature 002: primary contact must survive a script
   // failure, so it is authored in the document — which means it can drift, which means it
   // needs this check.
-  // `headline` and `availability` joined in feature 003 for the same reason: FR-018 requires the
-  // positioning statement in the served document, which means it can drift, which means it needs
-  // this check (FR-010).
-  for (const field of ['name', 'role', 'headline', 'summary', 'availability', 'location', 'email']) {
+  // `headline` joined in feature 003 for the same reason: FR-018 requires the positioning
+  // statement in the served document, which means it can drift, which means it needs this
+  // check (FR-010).
+  //
+  // `availability` is not here because the profile no longer states one. It is optional
+  // (FR-013), so its absence is a legitimate state, not a drift — tests/e2e/no-js.spec.js
+  // asserts nothing renders in its place.
+  for (const field of ['name', 'role', 'headline', 'summary', 'location', 'email']) {
     test(`${field} matches exactly`, () => {
       const inHtml = staticValue(field);
 
@@ -105,7 +109,7 @@ describe('static HTML matches js/data/profile.js', () => {
 
   /**
    * A destination can legitimately be reachable from more than one place: the secondary call to
-   * action points at the GitHub profile, and so does the social list. FR-073 says that must be a
+   * action points at the GitHub profile, and so does a contact route. FR-073 says that must be a
    * deliberate choice that does not break an assumption of uniqueness — so this asserts what
    * actually matters (at least one anchor carries the profile's label, and *no* anchor to the
    * destination is vaguely named), rather than that exactly one anchor exists.
@@ -117,10 +121,15 @@ describe('static HTML matches js/data/profile.js', () => {
 
       const names = anchors.map((a) => (a.getAttribute('aria-label') ?? a.textContent).trim());
 
-      assert.ok(
-        names.includes(link.label),
-        `no ${link.platform} anchor carries profile.js's label "${link.label}" — found: ${names.join(' | ')}`,
-      );
+      // profile.js's label is the social LIST's copy. A destination reached only from a call to
+      // action or a contact route — GitHub, since the Hero's social list dropped it — is named
+      // for what it offers there instead, and the naming check below is what governs it.
+      if (doc.querySelector(`.social-links a[href="${link.url}"]`)) {
+        assert.ok(
+          names.includes(link.label),
+          `no ${link.platform} anchor carries profile.js's label "${link.label}" — found: ${names.join(' | ')}`,
+        );
+      }
 
       for (const name of names) {
         assert.doesNotMatch(name, /^(clique aqui|click here|aqui|link|saiba mais)$/i);
@@ -129,12 +138,20 @@ describe('static HTML matches js/data/profile.js', () => {
     }
   });
 
-  test('the social links use the icon each entry names', () => {
-    for (const link of profile.socialLinks) {
-      // The entry in the social list is the one that carries the glyph; a call to action
-      // pointing at the same destination is a text button and is not required to.
-      const anchor = doc.querySelector(`.social-links a[href="${link.url}"]`);
-      assert.ok(anchor, `${link.platform} is missing from the social list`);
+  /**
+   * Not every social link has to appear in the Hero's social list: GitHub is reached from the
+   * secondary call to action instead, so the list carries only LinkedIn. Reachability is the
+   * requirement and is asserted above; this asserts the glyph of whichever entries the list
+   * does carry, and that the list invents no destination profile.js does not state.
+   */
+  test('the social list uses the icon each entry names', () => {
+    const anchors = [...doc.querySelectorAll('.social-links a[href]')];
+    assert.ok(anchors.length > 0, 'the social list is empty');
+
+    for (const anchor of anchors) {
+      const url = anchor.getAttribute('href');
+      const link = profile.socialLinks.find((entry) => entry.url === url);
+      assert.ok(link, `the social list links to ${url}, which profile.js does not state`);
 
       const href = anchor.querySelector('use')?.getAttribute('href');
       assert.equal(href, `#${link.icon}`, `${link.platform} renders the wrong glyph`);

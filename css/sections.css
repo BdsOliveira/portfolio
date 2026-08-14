@@ -4,6 +4,23 @@
  *
  * Nothing here hides content at a smaller width. Where a layout needs to change, it changes
  * shape rather than disappearing (constitution VI, FR-034).
+ *
+ * PROPORTION — the rules this file now follows, and why.
+ *
+ * 1. Every collection grid is `auto-fit` with a `min()` floor rather than a fixed column
+ *    count at a breakpoint. A fixed count is what orphans items: three columns strands the
+ *    fifth of five, and two columns leaves a single project sitting in half a page. auto-fit
+ *    fits as many equal columns as the *available* width allows, so the row always fills and
+ *    the tracks stay identical to each other. It also removes several media queries outright.
+ *
+ * 2. Vertical rhythm comes from the fluid --space-* steps, so it grows with the viewport
+ *    instead of stepping once at 48rem.
+ *
+ * 3. At the desktop breakpoint a section becomes two columns: a sticky heading and the
+ *    content. Prose is capped at --measure for readability, and in a single 1152px column
+ *    that cap left most of the page empty to the right of it. Moving the heading beside the
+ *    content spends that width on the heading instead of leaving it blank — the content
+ *    column then lands close to --measure on its own.
  */
 
 /* Shared shell ---------------------------------------------------------- */
@@ -20,6 +37,19 @@
   max-width: var(--content-max);
   margin-inline: auto;
   padding-block: var(--space-2xl);
+}
+
+/*
+ * A hairline between sections. With the generous padding above and below, adjacent sections
+ * would otherwise read as one continuous column of text; the rule gives the eye the section
+ * boundary without a heavy divider or a background change.
+ *
+ * `+` still matches when the previous section is `hidden` — that section renders nothing, so
+ * the visible one that follows it is genuinely the next one, and gets its rule.
+ */
+.hero + .section,
+.section + .section {
+  border-block-start: var(--border-width) solid var(--color-border);
 }
 
 .section__heading {
@@ -45,7 +75,7 @@
   top: 0;
   z-index: 10;
   background-color: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  border-block-end: var(--border-width) solid var(--color-border);
 }
 
 .site-nav {
@@ -54,15 +84,25 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2xs) var(--space-md);
+  min-height: var(--header-height);
   max-width: var(--content-max);
   margin-inline: auto;
   padding-block: var(--space-2xs);
 }
 
 .site-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  color: var(--color-text);
   font-size: var(--text-lg);
   font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
   text-decoration: none;
+}
+
+.site-nav__brand:hover {
+  color: var(--color-accent);
 }
 
 /*
@@ -73,7 +113,12 @@
  * a no-script visitor gets every destination — taller, but complete (research R2).
  */
 .site-nav__toggle {
-  padding: var(--space-3xs) var(--space-xs);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding-inline: var(--space-sm);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-sm);
   background-color: transparent;
@@ -93,8 +138,55 @@
   flex-basis: 100%;
 }
 
+/*
+ * Expanded, the mobile list is a COLUMN of full-width rows, not a wrapping row of short ones.
+ * A wrapping row put ten destinations into three cramped lines whose targets sat a few pixels
+ * apart — the arrangement `touch-spacing` and `no-precision-required` exist to prevent. A
+ * column gives each destination the full width of the header and a 44px row.
+ */
 .site-nav[data-collapsible="true"] .site-nav__toggle[aria-expanded="true"] + .site-nav__list {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  margin-block-start: var(--space-2xs);
+  padding-block: var(--space-2xs);
+  border-block-start: var(--border-width) solid var(--color-border);
+}
+
+.site-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3xs) var(--space-2xs);
+}
+
+/*
+ * 44px minimum on every destination (touch-target-size). These were inline links with 4px of
+ * block padding — roughly a 26px target, and ten of them side by side.
+ *
+ * Muted rather than accent-coloured: ten accent links in a row is a band of colour competing
+ * with the content beneath it. --color-text-muted on --color-surface is 7.4:1 (variables.css),
+ * and the current destination is not signalled by colour alone — hover and focus both change
+ * the background as well.
+ */
+.site-nav__list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  padding-inline: var(--space-sm);
+  border-radius: var(--radius-sm);
+  /* Fixed 14px, not the fluid body step: ten destinations have to share one row with the
+     brand, and every point of growth in the body scale pushes that row into wrapping
+     earlier. The 44px height, not the type size, is what makes the target. */
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.site-nav__list a:hover {
+  background-color: var(--color-surface-accent);
+  color: var(--color-text);
 }
 
 @media (min-width: 48rem) {
@@ -108,22 +200,12 @@
     display: flex;
     flex-basis: auto;
   }
-}
 
-.site-nav__list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs) var(--space-md);
-}
-
-.site-nav__list a {
-  display: inline-block;
-  padding-block: var(--space-3xs);
-  text-decoration: none;
-}
-
-.site-nav__list a:hover {
-  text-decoration: underline;
+  /* Tighter horizontal padding once the links share a row with the brand: the 44px height
+     is what carries the target, and the row has to fit ten destinations. */
+  .site-nav__list a {
+    padding-inline: var(--space-2xs);
+  }
 }
 
 /* Hero ------------------------------------------------------------------- */
@@ -131,19 +213,33 @@
 .hero {
   display: grid;
   gap: var(--space-xl);
-  padding-block-start: var(--space-2xl);
+  /* More air above than below: the hero sits under a sticky header and needs to clear it, and
+     the section that follows brings its own generous padding. */
+  padding-block: var(--space-3xl) var(--space-2xl);
 }
 
+/*
+ * `align-items: stretch`, NOT `flex-start`.
+ *
+ * flex-start sizes every child to fit-content, and a fit-content box has no width to wrap
+ * against: an unbreakable string in the <h1> grew the box past the viewport and took the whole
+ * document into horizontal scroll with it (FR-065, SC-011). `overflow-wrap: break-word` on the
+ * body cannot save it, because there is no constraint for it to break at.
+ *
+ * Stretched, each child is as wide as the column and wraps inside it. The child that genuinely
+ * needs to be content-sized — the actions row — says so itself with `flex-wrap`.
+ */
 .hero__intro {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  align-items: flex-start;
+  gap: var(--space-md);
+  align-items: stretch;
+  min-width: 0;
 }
 
 .hero__lede {
   font-size: var(--text-lg);
-  color: var(--color-text);
+  color: var(--color-text-muted);
 }
 
 /*
@@ -156,23 +252,15 @@
   font-size: var(--text-xl);
   font-weight: var(--font-weight-semibold);
   line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
   color: var(--color-heading);
   margin-block-start: var(--space-2xs);
 }
 
 .hero__summary {
   max-width: var(--measure);
+  line-height: var(--leading-relaxed);
   color: var(--color-text-muted);
-}
-
-/* --color-text on --color-surface-accent is 9.6:1 (variables.css). */
-.hero__availability {
-  align-self: flex-start;
-  padding: var(--space-3xs) var(--space-xs);
-  border-radius: var(--radius-pill);
-  background-color: var(--color-surface-accent);
-  color: var(--color-text);
-  font-size: var(--text-sm);
 }
 
 /*
@@ -182,20 +270,22 @@
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
   margin-block-start: var(--space-2xs);
 }
 
 .social-links {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md);
+  gap: var(--space-sm) var(--space-lg);
+  margin-block-start: var(--space-2xs);
 }
 
 .social-links__link {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2xs);
+  min-height: var(--touch-target);
   text-decoration: none;
 }
 
@@ -216,7 +306,9 @@
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+  border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
 }
 
 /* About ------------------------------------------------------------------ */
@@ -224,24 +316,31 @@
 .about {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 /* Capped at the measure so the two paragraphs stay readable rather than spanning the grid. */
 .about__paragraph {
   max-width: var(--measure);
+  line-height: var(--leading-relaxed);
   color: var(--color-text-muted);
 }
 
 /* Skills ----------------------------------------------------------------- */
 
+/*
+ * Six groups. auto-fit lands on three columns at desktop and two at tablet, which divides six
+ * exactly either way — but the rule does not depend on there being six: add a seventh group and
+ * the tracks stay identical, which a hardcoded `repeat(3, 1fr)` cannot promise.
+ */
 .skill-groups {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--grid-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
 }
 
 .skill-group__name {
-  margin-block-end: var(--space-sm);
+  margin-block-end: var(--space-md);
   font-size: var(--text-lg);
 }
 
@@ -249,7 +348,8 @@
 
 .project-list {
   display: grid;
-  gap: var(--space-xl);
+  gap: var(--grid-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 }
 
 /*
@@ -261,7 +361,7 @@
 .project-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xs);
+  gap: var(--space-xs);
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -276,11 +376,12 @@
   height: auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   margin-block-end: var(--space-2xs);
 }
 
 .project-card__description {
+  line-height: var(--leading-relaxed);
   color: var(--color-text-muted);
 }
 
@@ -289,48 +390,49 @@
   flex-wrap: wrap;
   gap: var(--space-2xs);
   margin-block-start: auto;
-  padding-block-start: var(--space-2xs);
+  padding-block-start: var(--space-sm);
 }
 
 /* Engineering Philosophy --------------------------------------------------- */
 
+/*
+ * One column at every width, deliberately.
+ *
+ * This was two columns at the desktop breakpoint, and there are five principles — so the fifth
+ * sat alone in a half-width cell, which is exactly the asymmetry the layout was meant to avoid.
+ * A stated position also needs its full measure to be read as an argument rather than a slogan,
+ * so the single column is the better shape for the content as well as the better shape on screen.
+ */
 .principle-list {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
 .principle {
   min-width: 0;
   overflow-wrap: anywhere;
-  padding-inline-start: var(--space-sm);
-  border-inline-start: var(--border-width) solid var(--color-border);
+  padding-inline-start: var(--space-md);
+  border-inline-start: calc(var(--border-width) * 2) solid var(--color-border);
 }
 
 .principle__title {
   font-size: var(--text-lg);
   line-height: var(--leading-tight);
-  margin-block-end: var(--space-3xs);
+  margin-block-end: var(--space-2xs);
 }
 
 .principle__detail {
   max-width: var(--measure);
+  line-height: var(--leading-relaxed);
   color: var(--color-text-muted);
-}
-
-@media (min-width: 64rem) {
-  /* Two columns only at the widest breakpoint: a stated position needs its full measure to be
-     read as an argument rather than as a slogan. */
-  .principle-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-lg);
-  }
 }
 
 /* Community ---------------------------------------------------------------- */
 
 .community-list {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--grid-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
 }
 
 .community {
@@ -357,6 +459,7 @@
 
 .community__description {
   max-width: var(--measure);
+  line-height: var(--leading-relaxed);
   color: var(--color-text-muted);
 }
 
@@ -364,27 +467,26 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2xs);
-  padding-block-start: var(--space-2xs);
-}
-
-@media (min-width: 48rem) {
-  .community-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  padding-block-start: var(--space-sm);
 }
 
 /* Certifications --------------------------------------------------------- */
 
+/*
+ * The `max-width: var(--measure)` that used to be here made a two-entry list occupy a narrow
+ * strip on the left of an otherwise empty section. These are cards, not prose: they take the
+ * same auto-fit treatment as every other collection, so two entries become two equal columns.
+ */
 .certification-list {
   display: grid;
-  gap: var(--space-sm);
-  max-width: var(--measure);
+  gap: var(--grid-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 }
 
 .certification {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .certification__badge {
@@ -392,9 +494,9 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 3rem;
-  height: 3rem;
-  border-radius: var(--radius-sm);
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--radius-md);
   background-color: var(--color-surface-accent);
   color: var(--color-text);
 }
@@ -405,8 +507,14 @@
   font-size: var(--text-sm);
 }
 
+.certification__title {
+  margin-block-end: var(--space-3xs);
+}
+
 .certification__link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
   margin-block-start: var(--space-2xs);
 }
 
@@ -414,7 +522,7 @@
 
 .timeline {
   display: grid;
-  gap: var(--space-sm);
+  gap: var(--grid-gap);
 }
 
 .timeline__dates,
@@ -424,13 +532,23 @@
   font-size: var(--text-sm);
 }
 
+.timeline__title {
+  margin-block-end: var(--space-2xs);
+}
+
 .timeline__summary {
-  margin-block-start: var(--space-2xs);
+  max-width: var(--measure);
+  margin-block-start: var(--space-sm);
+  line-height: var(--leading-relaxed);
 }
 
 .timeline__achievements {
-  margin-block-start: var(--space-2xs);
+  display: grid;
+  gap: var(--space-2xs);
+  max-width: var(--measure);
+  margin-block-start: var(--space-sm);
   padding-inline-start: var(--space-md);
+  line-height: var(--leading-relaxed);
   list-style: disc;
 }
 
@@ -440,44 +558,36 @@
  * The closing call to action (FR-042): prominent through hierarchy and spacing, not through
  * sales devices. No gradient, no oversized panel, no urgency.
  */
-.contact__availability {
-  max-width: var(--measure);
-  margin-block-end: var(--space-md);
-  font-size: var(--text-lg);
-  color: var(--color-text);
-}
-
 /*
  * Four distinct routes rather than one button and some prose (FR-040). Wraps at every width, so
  * a route is never pushed off-screen or truncated at 320px.
  */
+/* Last block in the section now that the form is gone, so no trailing margin: the section's own
+   padding supplies the space below it. */
 .contact-routes {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2xs);
-  margin-block-end: var(--space-lg);
+  gap: var(--space-sm);
 }
 
 .contact-details {
   display: grid;
-  gap: var(--space-2xs);
   max-width: var(--measure);
-  margin-block-end: var(--space-md);
+  margin-block-end: var(--space-xl);
+}
+
+/* A labelled row rather than two inline spans: the label column lines up between rows, which
+   is what makes a two-row list read as a table of facts instead of two stray sentences. */
+.contact-details__item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-md);
+  padding-block: var(--space-xs);
+  border-block-end: var(--border-width) solid var(--color-border);
 }
 
 .contact-details__label {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  margin-inline-end: var(--space-2xs);
-}
-
-.contact-form {
-  display: grid;
-  gap: var(--space-md);
-  max-width: var(--measure);
-}
-
-.contact-form__note {
+  min-width: 6rem;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
@@ -486,8 +596,8 @@
 
 .site-footer {
   background-color: var(--color-surface);
+  border-block-start: var(--border-width) solid var(--color-border);
   padding-block: var(--space-xl);
-  margin-block-start: var(--space-2xl);
 }
 
 .site-footer__copyright {
@@ -501,37 +611,48 @@
 /* Tablet ----------------------------------------------------------------- */
 
 @media (min-width: 48rem) {
-  :root {
-    --gutter: var(--space-lg);
-  }
-
+  /*
+   * Close to 1:1 rather than the 3:2 it was. The portrait is a 4/3 illustration; starving it to
+   * two fifths of the row while the text column ran well past its measure was the widest of the
+   * proportion problems on this page.
+   */
   .hero {
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     align-items: center;
-    padding-block: var(--space-3xl);
-  }
-
-  .skill-groups,
-  .project-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .card,
-  .project-card {
-    padding: var(--space-lg);
+    gap: var(--space-2xl);
+    padding-block: var(--space-3xl) var(--space-2xl);
   }
 }
 
 /* Desktop ---------------------------------------------------------------- */
 
 @media (min-width: 64rem) {
-  .skill-groups,
-  .project-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  /*
+   * Two columns: the heading beside its content, not above it.
+   *
+   * The heading sticks while its section scrolls, so the reader always knows which section they
+   * are in — the sticky position works because the heading's grid area spans the full row height
+   * even though `align-items: start` keeps the box itself at the top of it.
+   *
+   * `column-gap` only, never `row-gap`: the content column's children space themselves with
+   * their own margins, and a row-gap here would add to those and double the spacing.
+   */
+  .section {
+    display: grid;
+    grid-template-columns: minmax(0, var(--section-label)) minmax(0, 1fr);
+    column-gap: var(--space-xl);
+    align-items: start;
   }
 
-  .certification-list,
-  .timeline {
-    gap: var(--space-md);
+  .section__heading {
+    position: sticky;
+    top: var(--sticky-offset);
+    margin-block-end: 0;
+  }
+
+  /* Everything that is not the heading belongs to the content column. Written as a negation so
+     a section that later authors a second block beside .section__body still lands correctly. */
+  .section > :not(.section__heading) {
+    grid-column: 2;
   }
 }

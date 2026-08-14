@@ -144,9 +144,10 @@
                      because it is the claim; the summary is the evidence for it. -->
                 <p class="hero__headline" data-profile="headline">Construo e modernizo sistemas em produção que precisam continuar funcionando enquanto mudam.</p>
                 <p class="hero__summary" data-profile="summary">Especializado em PHP/Laravel, APIs REST e sistemas distribuídos, com foco em arquitetura de software e IA aplicada.</p>
-                <!-- Rendered only while profile.js states an availability; pruned otherwise, so
-                     nothing appears in its place (FR-013, contract I3-2). -->
-                <p class="hero__availability" data-profile="availability" data-profile-optional="availability">Aberto a oportunidades remotas</p>
+                <!-- No availability statement: js/data/profile.js states no `availability`, by
+                     the owner's decision. The field is still optional-by-contract (FR-013), so
+                     restoring it means adding it back to profile.js and re-authoring a
+                     <p data-profile="availability" data-profile-optional="availability"> here. -->
                 <!-- Anchors, not buttons: they navigate. The pre-migration control was a
                      <button> with no behaviour at all (FR-028, contract C-10).
                      Both are omitted entirely if their destination leaves profile.js (FR-014). -->
@@ -154,17 +155,16 @@
                     <a class="button hero__cta" data-profile="primaryCta" href="#contact">Vamos conversar</a>
                     <a class="button button--ghost" data-profile="secondaryCta" href="https://github.com/BdsOliveira" rel="noopener noreferrer" target="_blank">Ver projetos no GitHub</a>
                 </div>
+                <!-- GitHub is deliberately NOT in this list: the secondary call to action above
+                     already points at the same profile, and two GitHub anchors a few centimetres
+                     apart is the duplication FR-073 warns about. profile.socialLinks still
+                     carries it — it is a real profile of the owner, so it stays in the JSON-LD
+                     sameAs and in the contact routes. -->
                 <ul class="social-links" aria-label="Perfis profissionais">
-                    <li>
-                        <a class="social-links__link" href="https://github.com/BdsOliveira" rel="noopener noreferrer" target="_blank">
-                            <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-github"></use></svg>
-                            <span data-profile="social-label">Bruno Oliveira no GitHub</span>
-                        </a>
-                    </li>
                     <li>
                         <a class="social-links__link" href="https://www.linkedin.com/in/bruno-oliveira/" rel="noopener noreferrer" target="_blank">
                             <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-linkedin"></use></svg>
-                            <span data-profile="social-label">Bruno Oliveira no LinkedIn</span>
+                            <span data-profile="social-label">Ver no LinkedIn</span>
                         </a>
                     </li>
                 </ul>
@@ -261,10 +261,13 @@
               The email anchor's visible text IS the address, which gives it a descriptive
               accessible name without a separate label.
             -->
-            <!-- What the owner is open to (FR-039). Mirrored from profile.availability, like
-                 the Hero's copy, and removed with it if the profile ever drops the field. -->
-            <p class="contact__availability" data-profile="availability" data-profile-optional="availability">Aberto a oportunidades remotas</p>
-
+            <!--
+              Wrapped in .section__body like every other section, so the two-column layout at
+              the desktop breakpoint (sections.css) has exactly one content column to place.
+              Without it, each of the four blocks below would be laid out as a separate grid
+              item and the heading column would only align with the first of them.
+            -->
+            <div class="section__body">
             <ul class="contact-details">
                 <li class="contact-details__item">
                     <span class="contact-details__label">Localização</span>
@@ -277,9 +280,12 @@
             </ul>
 
             <!--
-              Contact routes (FR-040). Email, LinkedIn, GitHub and CV as four distinct paths,
-              each named so it identifies its destination on its own (FR-059) — never "clique
-              aqui".
+              Contact routes (FR-040). LinkedIn and GitHub as distinct paths, each named so it
+              identifies its destination on its own (FR-059) — never "clique aqui".
+
+              There is no email BUTTON here by the owner's decision, but email is still a route:
+              the address above is a live mailto anchor whose visible text is the address itself,
+              so primary contact survives with no script and no form (constitution IV).
 
               There is NO CV route authored here, because js/data/profile.js states no `cvUrl`.
               A route whose destination is absent is omitted entirely, not rendered inert
@@ -292,11 +298,10 @@
               used to assume uniqueness were rewritten rather than worked around (FR-073).
             -->
             <ul class="contact-routes" aria-label="Formas de contato">
+                <!-- LinkedIn carries the primary fill now that it leads the list: a row of
+                     ghost-only buttons states no preference between the routes. -->
                 <li>
-                    <a class="button" href="mailto:bds.commus@gmail.com">Enviar um email</a>
-                </li>
-                <li>
-                    <a class="button button--ghost" href="https://www.linkedin.com/in/bruno-oliveira/"
+                    <a class="button" href="https://www.linkedin.com/in/bruno-oliveira/"
                        rel="noopener noreferrer" target="_blank">
                         <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24"><use href="#icon-linkedin"></use></svg>
                         Conversar no LinkedIn
@@ -310,33 +315,9 @@
                     </a>
                 </li>
             </ul>
-            <!-- Every field has a persistent <label>. Placeholders are supplementary and are
-                 never the only identifier (FR-027, contract P-6). -->
-            <form class="contact-form">
-                <div class="field">
-                    <label class="field__label" for="contact-name">Nome</label>
-                    <input class="field__control" id="contact-name" name="name" type="text"
-                           autocomplete="name" placeholder="Como devo chamar você" required>
-                </div>
-                <div class="field">
-                    <label class="field__label" for="contact-email">Email</label>
-                    <input class="field__control" id="contact-email" name="email" type="email"
-                           autocomplete="email" placeholder="voce@exemplo.com" required>
-                </div>
-                <div class="field">
-                    <label class="field__label" for="contact-message">Mensagem</label>
-                    <textarea class="field__control" id="contact-message" name="message" rows="5"
-                              placeholder="Sobre o que gostaria de conversar?" required></textarea>
-                </div>
-                <button class="button button--block" type="submit">Enviar Mensagem</button>
-                <!-- The LinkedIn anchor that used to sit here is gone (FR-073, research R5):
-                     LinkedIn is now an explicit contact route a few centimetres above, so the
-                     note duplicated a path already adjacent to it — and that third instance is
-                     what made the social-link checks fail on an assumption of uniqueness. -->
-                <p class="contact-form__note">
-                    Prefere outro caminho? Use qualquer uma das opções acima.
-                </p>
-            </form>
+            <!-- There is no contact form, by the owner's decision: there is no backend to submit
+                 to, and every route above works without JavaScript (constitution IV). -->
+            </div>
         </section>
     </main>
 
